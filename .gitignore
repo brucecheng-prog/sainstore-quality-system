@@ -1,0 +1,10 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.db-shm
+*.db-wal
+SainStore实验室文件/
+.workbuddy/
+data/client_secret.json
+data/gcp_credentials.json

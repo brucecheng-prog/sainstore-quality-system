@@ -8,4 +8,3 @@ VERSION = "v2.0.1"
 BUILD_DATE = "2026-06-14"
 BUILD_TYPE = "大版本"  # 大版本/小版本/修订版本
 RELEASE_NAME = "品质系统管理平台 V2 — 正式上线版"
-

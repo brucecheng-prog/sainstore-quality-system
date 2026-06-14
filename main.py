@@ -176,6 +176,9 @@ def init_session():
     # 本地开发环境：直接免登录
     if not is_production():
         _local_dev_auto_login()
+    elif is_streamlit_cloud():
+        # Streamlit Cloud 平台已处理认证，直接信任
+        _streamlit_cloud_login()
 
 
 def _try_cookie_login():
@@ -202,6 +205,20 @@ def _local_dev_auto_login():
     st.session_state.user_email = dev_email
     st.session_state.user_name = "Bruce Cheng (开发者)"
     st.session_state.is_admin = True
+
+
+def _streamlit_cloud_login():
+    """Streamlit Cloud 环境：平台已认证用户"""
+    try:
+        from streamlit.web.server.websocket_headers import _get_websocket_headers
+        headers = _get_websocket_headers()
+        email = (headers or {}).get("X-Streamlit-User", "user@sainstore.com")
+    except Exception:
+        email = "user@sainstore.com"
+    st.session_state.authenticated = True
+    st.session_state.user_email = email
+    st.session_state.user_name = email.split("@")[0]
+    st.session_state.is_admin = is_admin(email)
 
 
 def _set_auth_cookie(email):
@@ -294,12 +311,14 @@ def is_production():
     """判断是否在生产环境（HF Space / Streamlit Cloud）"""
     if os.environ.get("SPACE_HOST", ""):
         return True
-    if os.environ.get("STREAMLIT_SHARING_MODE", "") == "streamlit_public":
-        return True
-    # Streamlit Cloud sets this env var
-    if os.environ.get("STREAMLIT_RUNTIME_ENV", "") == "cloud":
+    if os.environ.get("STREAMLIT_SHARING_MODE", ""):
         return True
     return False
+
+
+def is_streamlit_cloud():
+    """判断是否在 Streamlit Cloud"""
+    return bool(os.environ.get("STREAMLIT_SHARING_MODE", ""))
 
 
 # ---- 管理面板 ----
@@ -654,7 +673,6 @@ try:
 except Exception as e:
     st.error(f"⚠️ 系统遇到意外错误，请刷新页面重试。")
     st.caption(f"错误详情（仅开发者可见）: {str(e)[:500]}")
-    # 记录错误
     try:
         log_activity("system", f"系统错误: {str(e)[:200]}", "system", str(e)[:300], "")
     except Exception:

@@ -291,8 +291,15 @@ def exchange_code_for_token(code, redirect_uri):
 
 
 def is_production():
-    """判断是否在生产环境（HF Space）"""
-    return bool(os.environ.get("SPACE_HOST", ""))
+    """判断是否在生产环境（HF Space / Streamlit Cloud）"""
+    if os.environ.get("SPACE_HOST", ""):
+        return True
+    if os.environ.get("STREAMLIT_SHARING_MODE", "") == "streamlit_public":
+        return True
+    # Streamlit Cloud sets this env var
+    if os.environ.get("STREAMLIT_RUNTIME_ENV", "") == "cloud":
+        return True
+    return False
 
 
 # ---- 管理面板 ----
@@ -593,8 +600,14 @@ def main_app():
             st.Page("_pages/qc_sample.py", title="样品管理", icon="📦"),
             st.Page("_pages/qc_change.py", title="变更管理", icon="📝"),
         ],
-        # 📊 数据智能分析（仅本地开发环境，公网不加载）
-        "📊 数据智能分析": []  if is_production() else [
+        "ℹ️ 关于": [
+            st.Page("_pages/about.py", title="版本信息", icon="ℹ️"),
+        ],
+    }
+
+    # 仅本地开发环境显示数据智能分析（公网不加载）
+    if not is_production():
+        pages["📊 数据智能分析"] = [
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_summary.py", title="数据汇总", icon="📈"),
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_sku.py", title="SKU分析", icon="🔍"),
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_bg.py", title="BG分析", icon="🏢"),
@@ -604,11 +617,8 @@ def main_app():
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_pareto.py", title="帕累托分析", icon="📐"),
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_search.py", title="搜索中心", icon="🔎"),
             st.Page("/Users/bruce/Desktop/Workbuddy_Bruce/品质系统_数据分析/dashboard/_pages/qic_export.py", title="导出数据", icon="📤"),
-        ],
-        "ℹ️ 关于": [
-            st.Page("_pages/about.py", title="版本信息", icon="ℹ️"),
-        ],
-    }
+        ]
+
 
     # 仅本地开发环境显示活动日志
     if not is_production():

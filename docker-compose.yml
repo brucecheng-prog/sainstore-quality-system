@@ -1,0 +1,37 @@
+services:
+  qms:
+    build: .
+    container_name: qms-app
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-8501}:7860"
+    env_file:
+      - .env
+    environment:
+      TZ: "${TZ:-Asia/Shanghai}"
+      FORCE_PRODUCTION: "${FORCE_PRODUCTION:-1}"
+      PUBLIC_BASE_URL: "${PUBLIC_BASE_URL:-}"
+      ALLOWED_DOMAINS: "${ALLOWED_DOMAINS:-sainstore.com}"
+      COOKIE_SECRET: "${COOKIE_SECRET:-change-me}"
+      COMPANY_LOGO_PATH: "${COMPANY_LOGO_PATH:-}"
+      LOCAL_ANALYTICS_DIR: "${LOCAL_ANALYTICS_DIR:-}"
+      NAS_URL: "${NAS_URL:-}"
+      NAS_ACCOUNT: "${NAS_ACCOUNT:-}"
+      NAS_PASSWORD: "${NAS_PASSWORD:-}"
+      NAS_BASE_PATH: "${NAS_BASE_PATH:-}"
+      NAS_STAGING_PATH: "${NAS_STAGING_PATH:-}"
+      GOOGLE_CLIENT_ID: "${GOOGLE_CLIENT_ID:-}"
+      GOOGLE_CLIENT_SECRET: "${GOOGLE_CLIENT_SECRET:-}"
+    volumes:
+      - ./data:/app/data
+      - ./SainStore实验室文件:/app/SainStore实验室文件
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:7860/_stcore/health', timeout=5).read()"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s

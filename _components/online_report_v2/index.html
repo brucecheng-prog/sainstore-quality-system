@@ -1,0 +1,2675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>产品验货报告 · Product Inspection Report</title>
+<style>
+  :root{
+    --ink:#14233A; --ink-2:#22405F; --gold:#B8902E; --gold-soft:#EBDCB4;
+    --paper:#EEF0F3; --card:#FFFFFF; --line:#E1E5EB; --line-strong:#C9D0DA;
+    --text:#23292F; --muted:#6B7480;
+    --cr:#B42318; --ma:#C2680B; --mi:#1E6FA8; --shadow:0 12px 40px rgba(20,35,58,.12);
+    --ok:#157347; --ok-bg:#E7F4EC; --ng:#B42318; --ng-bg:#FBEDE7; --pend:#9A6700; --pend-bg:#FEF3CD;
+    --font-en:"Inter","Roboto","Helvetica Neue",Arial,sans-serif;
+    --font-cn:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--paper); color:var(--text);
+    font-family:var(--font-cn);
+    font-size:14px; line-height:1.65; -webkit-font-smoothing:antialiased;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{position:sticky; top:0; z-index:50; display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    padding:12px 22px; background:rgba(20,35,58,.97); color:#fff; box-shadow:0 4px 18px rgba(20,35,58,.25);}
+  .toolbar .brand{font-weight:700; letter-spacing:.5px; margin-right:auto; font-size:15px; display:flex; align-items:center; gap:10px;}
+  .toolbar .brand small{font-weight:400; opacity:.7; margin-left:6px; font-size:12px; font-family:var(--font-en);}
+  .btn{border:1px solid rgba(255,255,255,.28); background:transparent; color:#fff; padding:8px 16px; border-radius:8px; cursor:pointer; font-size:13px; transition:.18s; white-space:nowrap;}
+  .btn:hover{background:rgba(255,255,255,.12);}
+  .btn.primary{background:var(--gold); border-color:var(--gold); color:#1b1408; font-weight:600;}
+  .btn.primary:hover{background:#caa23d;}
+  .btn.ghost{background:rgba(255,255,255,.06);}
+
+  /* ============ FORM VIEW (interactive) ============ */
+  .page{width:100%; max-width:100%; margin:0; padding:0 0 60px; background:var(--card); box-shadow:var(--shadow); border-radius:6px; overflow:hidden;}
+  .doc-head{position:relative; background:linear-gradient(135deg,var(--ink),var(--ink-2)); color:#fff; padding:34px 40px;}
+  .doc-head .top{display:flex; align-items:center; gap:14px; margin-bottom:18px;}
+  .logo-img{width:178px;height:38px;object-fit:contain;object-position:left center;display:block;flex:none;}
+  .doc-head .org{font-size:13px; letter-spacing:2px; opacity:.85; font-family:var(--font-en);}
+  .doc-head h1{margin:0; font-size:27px; letter-spacing:1px; font-weight:700;}
+  .doc-head .sub{font-family:var(--font-en); font-size:15px; opacity:.82; margin-top:6px; letter-spacing:1px;}
+  .doc-head .doc-ver{display:inline-block; margin-top:14px; padding:6px 14px; border:1px solid var(--gold); border-radius:20px; background:rgba(197,165,95,.12); color:var(--gold-soft); font-size:12.5px; font-weight:600; letter-spacing:.5px;}
+  .doc-head .repno{position:absolute; right:40px; top:34px; text-align:right; font-family:var(--font-en);}
+  .doc-head .repno .k{font-size:11px; opacity:.7; letter-spacing:1px;}
+  .doc-head .repno .v{font-size:18px; font-weight:700; color:var(--gold-soft);}
+
+  .sec-title{display:flex; align-items:center; gap:12px; margin:0 0 4px; padding:0; font-size:18px; font-weight:700; color:var(--ink);}
+  .sec-title .num{display:inline-flex; align-items:center; justify-content:center; min-width:30px; height:26px; padding:0 8px;
+    background:linear-gradient(135deg,var(--ink),var(--ink-2)); color:#fff; border-radius:6px; font-size:13px; font-family:var(--font-en); font-weight:700;}
+  .sec-title .bar{width:4px; height:20px; background:var(--gold); border-radius:2px; margin-left:-4px;}
+  .sec-title .en{font-family:var(--font-en); font-weight:500; font-size:13px; color:var(--muted); letter-spacing:.5px;}
+  .sec-sub{font-size:11.5px; color:var(--muted); margin:2px 0 16px 42px; line-height:1.5;}
+
+  .section{padding:26px 34px 6px;}
+  .section + .section{border-top:1px solid var(--line);}
+  .sub-sec{margin:18px 0 22px;}
+  .sub-sec h3{font-size:14px; font-weight:700; color:var(--ink-2); margin:0 0 10px; padding-left:11px; border-left:3px solid var(--gold);}
+
+  .grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 22px;}
+  .grid.three{grid-template-columns:1fr 1fr 1fr;}
+  .field{display:flex; flex-direction:column; gap:5px;}
+  .field.full{grid-column:1 / -1;}
+  .field label{font-size:11.5px; color:var(--muted); font-weight:600; display:flex; align-items:center; gap:6px;}
+  .field label .en{font-family:var(--font-en); font-weight:400; opacity:.8;}
+  .field input, .field textarea, .field select{
+    border:1px solid var(--line-strong); border-radius:7px; padding:9px 11px; font-size:13.5px; font-family:var(--font-cn);
+    background:#fff; color:var(--text); width:100%; transition:.15s; line-height:1.5;}
+  .field textarea{resize:vertical; min-height:42px;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,144,46,.15);}
+
+  table{width:100%; border-collapse:collapse; font-size:13px; margin-bottom:6px;}
+  .tbl thead th, table.dyn thead th{background:var(--ink); color:#fff; font-weight:600; text-align:left; padding:9px 10px; font-size:12px; letter-spacing:.3px; white-space:nowrap;}
+  .tbl thead th .en, table.dyn thead th .en{display:block; font-family:var(--font-en); font-weight:400; opacity:.72; font-size:10px; margin-top:1px;}
+  .tbl tbody td, table.dyn tbody td{border:1px solid var(--line); padding:7px 9px; vertical-align:top;}
+  .tbl tbody tr:nth-child(even) td, table.dyn tbody tr:nth-child(even) td{background:#FBFCFE;}
+  .num-r{text-align:right; font-family:var(--font-en);}
+  .center{text-align:center;}
+
+  .fx-item{font-weight:700; font-size:13px; color:var(--ink);}
+  .fx-item-cn{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 8px; font-weight:700; font-size:13px; color:var(--ink); font-family:var(--font-cn); line-height:1.35; background:#fff;}
+  .fx-item-cn:focus{outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(184,144,46,.15);}
+  .fx-en-inline{font-family:var(--font-en); font-size:10.5px; color:#9aa3ad; margin-top:2px; line-height:1.35;}
+  /* English is a generated translation hint, not a second raw field. */
+  .fx-item-en,.ien,.spec-en,.meas-en{border:0 !important; background:transparent !important; box-shadow:none !important; color:#9aa3ad; font-family:var(--font-en); font-size:10.5px; font-style:italic; padding:2px 0; width:100%;}
+  .fx-std-cn, .fx-obs-cn{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 8px; font-size:12.5px; font-family:var(--font-cn); resize:vertical; min-height:34px; line-height:1.45;}
+  .fx-std-en, .fx-obs-en{width:100%; border:none; border-top:1px dashed var(--line-strong); background:transparent; padding:4px 8px 2px; font-size:10.5px; font-family:var(--font-en); color:#9aa3ad; font-style:italic; line-height:1.35;}
+  .fx-std-en:focus, .fx-obs-en:focus{outline:none; color:var(--ink-2); font-style:normal;}
+
+  .dyn-wrap{overflow-x:auto;}
+  table.dyn{table-layout:fixed;}
+  table.dyn col.c-no{width:34px;}
+  table.dyn col.c-item{width:17%;}
+  table.dyn col.c-std{width:28%;}
+  table.dyn col.c-act{width:25%;}
+  table.dyn col.c-qty{width:7%;}
+  table.dyn col.c-res{width:10%;}
+  table.dyn col.c-sev{width:7%;}
+  table.dyn col.c-del{width:30px;}
+  .dyn .izh{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 8px; font-weight:700; font-size:13px; color:var(--ink); font-family:var(--font-cn);}
+  .dyn .ien{width:100%; border:none; padding:3px 8px 1px; font-size:10.5px; font-family:var(--font-en); color:#9aa3ad; font-style:italic; line-height:1.3;}
+  .dyn .ien:focus{outline:none; color:var(--ink-2); font-style:normal;}
+  .dyn .spec-cn, .dyn .meas-cn{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 8px; font-size:12.5px; font-family:var(--font-cn); resize:vertical; min-height:36px; line-height:1.45;}
+  .dyn .spec-en, .dyn .meas-en{width:100%; border:none; border-top:1px dashed var(--line-strong); background:transparent; padding:3px 8px 2px; font-size:10.5px; font-family:var(--font-en); color:#9aa3ad; font-style:italic; line-height:1.3;}
+  .dyn .spec-en:focus, .dyn .meas-en:focus{outline:none; color:var(--ink-2); font-style:normal;}
+  .dyn .spec-en.pending, .dyn .meas-en.pending{color:#c9a227;}
+  .dyn .dyn-qty{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 6px; text-align:center; font-family:var(--font-en); font-size:12.5px;}
+  .dyn select.res, .dyn select.sev{width:100%; border:1px solid var(--line-strong); border-radius:6px; padding:6px 4px; font-size:12px;}
+  .row-del, .de-rm, .g-rm{border:none; background:#FBEDE7; color:var(--ng); width:26px; height:26px; border-radius:6px; cursor:pointer; font-size:15px; line-height:1; flex:none;}
+  .row-del:hover, .de-rm:hover, .g-rm:hover{background:var(--ng); color:#fff;}
+  .add-row{margin-top:8px; border:1px dashed var(--line-strong); background:#fafbfc; color:var(--ink-2); padding:8px 14px; border-radius:7px; cursor:pointer; font-size:12.5px; font-weight:600;}
+  .add-row:hover{background:#f0f3f7; border-color:var(--gold);}
+  .copy-prev{margin-left:8px; font-size:11px; font-weight:600; color:var(--gold); background:transparent; border:1px solid var(--gold); border-radius:6px; padding:4px 10px; cursor:pointer;}
+  .copy-prev:hover{background:var(--gold); color:#1b1408;}
+
+  /* read-only badges (used in form preview & report) */
+  .badge{display:inline-flex; align-items:center; justify-content:center; min-width:46px; height:22px; padding:0 9px; border-radius:5px; font-size:11px; font-weight:700; font-family:var(--font-en); letter-spacing:.5px; line-height:1;}
+  .b-pass{background:var(--ok-bg); color:var(--ok);}
+  .b-fail{background:var(--ng-bg); color:var(--ng);}
+  .b-cr{background:#FCE8E6; color:var(--cr);}
+  .b-ma{background:#FDF0E3; color:var(--ma);}
+  .b-mi{background:#E7F1F9; color:var(--mi);}
+  .b-na{background:#EEF0F3; color:var(--muted);}
+  .b-pending{background:var(--pend-bg); color:var(--pend);}
+
+  /* photo gallery (form) */
+  .gpanel{margin:0 0 24px;}
+  .gpanel h4{font-size:13px; font-weight:700; color:var(--ink-2); margin:0 0 10px; display:flex; align-items:center; gap:8px;}
+  .gpanel h4 .en{font-family:var(--font-en); font-weight:400; font-size:11px; color:var(--muted);}
+  .gpanel h4 .cnt{margin-left:auto; font-size:11px; color:var(--muted); background:#f0f3f7; padding:2px 9px; border-radius:20px; font-family:var(--font-en);}
+  .mob-up-bar{display:flex; align-items:center; gap:10px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:9px 12px; margin-bottom:14px;}
+  .mob-up-bar .mub-t{font-size:13px; font-weight:700; color:#1d4ed8;}
+  .mob-up-bar .mub-btns{margin-left:auto; display:flex; gap:8px;}
+  .mob-up-bar button{font-size:12.5px; padding:6px 12px; border:1px solid #bfdbfe; background:#fff; color:#1d4ed8; border-radius:8px; cursor:pointer;}
+  .mob-up-bar button:active{background:#dbeafe;}
+  .mob-qr{margin:0 0 16px; padding:16px; background:#f8fafc; border:1px dashed var(--line); border-radius:12px; text-align:center;}
+  .mob-qr #mobQr{display:inline-block; padding:10px; background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  .mob-qr-tip{font-size:12px; color:var(--muted); margin-top:10px;}
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:12px;}
+  .img-card{background:#fff; border:1px solid var(--line); border-radius:9px; overflow:hidden; box-shadow:0 1px 4px rgba(20,35,58,.06); display:flex; flex-direction:column;}
+  .img-card .thumb{width:100%; aspect-ratio:4/3; background:#f3f5f8; position:relative; cursor:pointer; overflow:hidden;}
+  .img-card .thumb img{width:100%; height:100%; object-fit:cover; display:block;}
+  .img-card .idx{position:absolute; top:6px; left:6px; background:rgba(20,35,58,.78); color:#fff; font-size:10px; font-family:var(--font-en); padding:1px 7px; border-radius:4px;}
+  .img-card .cap{width:100%; border:none; border-top:1px solid var(--line); padding:6px 8px; font-size:11px; font-family:var(--font-cn); resize:vertical; min-height:30px; line-height:1.4;}
+  .img-card .meta{display:flex; align-items:center; padding:0 8px 6px; gap:6px;}
+  .dropzone{border:2px dashed var(--line-strong); border-radius:10px; padding:16px; text-align:center; color:var(--muted); font-size:12px; cursor:pointer; transition:.15s; background:#fafbfc;}
+  .dropzone.drag{border-color:var(--gold); background:#fffaf0; color:var(--gold);}
+  .gallery-tabs{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;}
+
+  /* defects (form) */
+  .defect-entry{display:flex; gap:14px; padding:14px; border:1px solid var(--line); border-left:4px solid var(--cr); border-radius:9px; margin-bottom:14px; background:#fff;}
+  .de-no{width:30px;height:30px;border-radius:50%;background:var(--cr);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--font-en);flex:none;font-size:14px;}
+  .de-body{flex:1;}
+  .de-head{display:flex; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+  .de-head select{border:1px solid var(--line-strong); border-radius:6px; padding:6px 8px; font-size:12px;}
+  .de-head .de-rm{margin-left:auto;}
+  .de-cats{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;}
+  .de-desc{width:100%; border:1px solid var(--line-strong); border-radius:7px; padding:8px 10px; font-size:12.5px; font-family:var(--font-cn); resize:vertical; min-height:50px; line-height:1.5;}
+  .de-locrow{margin:8px 0 0;}
+  .de-loc{width:100%; border:1px solid var(--line-strong); border-radius:7px; padding:7px 10px; font-size:12.5px; font-family:var(--font-cn);}
+  .de-photos{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+  .de-photos .thumb{width:88px; height:66px; border-radius:7px; overflow:hidden; border:1px solid var(--line); position:relative; cursor:pointer;}
+  .de-photos .thumb img{width:100%; height:100%; object-fit:cover;}
+  .de-ph-up{font-size:12px; padding:4px 10px; border:1px dashed var(--line); background:#fff; border-radius:6px; cursor:pointer; color:#475569; align-self:flex-start;}
+  .de-ph-up:hover{background:#f1f5f9;}
+  .de-add{border:1px dashed var(--line-strong); border-radius:7px; width:88px; height:66px; display:flex; align-items:center; justify-content:center; color:var(--muted); cursor:pointer; font-size:12px;}
+
+  /* conclusion (form) */
+  .conc-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .verdict-box{border:2px solid var(--ok); border-radius:10px; padding:18px 22px; text-align:center; background:var(--ok-bg);}
+  .verdict-box.ng{border-color:var(--ng); background:var(--ng-bg);}
+  .verdict-box .v-en{font-family:var(--font-en); font-size:13px; color:var(--muted); letter-spacing:1px;}
+  .verdict-box .v-cn{font-size:24px; font-weight:800; color:var(--ok); margin:4px 0;}
+  .verdict-box.ng .v-cn{color:var(--ng);}
+  .sign-row{display:flex; gap:20px; margin-top:18px; flex-wrap:wrap;}
+  .sign-box{flex:1; min-width:180px; border:1px solid var(--line); border-radius:9px; padding:12px 14px;}
+  .sign-box label{font-size:11.5px; color:var(--muted); font-weight:600; display:block; margin-bottom:6px;}
+  .sign-box input{border:1px solid var(--line-strong); border-radius:6px; padding:8px 10px; width:100%; font-size:13px;}
+  .dstats{display:flex; gap:14px; flex-wrap:wrap; align-items:center; font-size:13px; color:var(--ink-2);}
+
+  /* lightbox */
+  .lightbox{position:fixed; inset:0; background:rgba(10,16,26,.92); display:none; align-items:center; justify-content:center; z-index:200; flex-direction:column;}
+  .lightbox.on{display:flex;}
+  .lightbox img{max-width:90%; max-height:80%; border-radius:8px; box-shadow:0 10px 50px rgba(0,0,0,.5);}
+  .lightbox .lb-cap{color:#fff; margin-top:14px; font-size:13px; text-align:center; max-width:80%;}
+  .lightbox .lb-nav{position:absolute; top:50%; transform:translateY(-50%); color:#fff; font-size:34px; cursor:pointer; user-select:none; padding:0 22px; opacity:.8;}
+  .lightbox .lb-nav:hover{opacity:1;}
+  .lightbox .lb-close{position:absolute; top:20px; right:28px; color:#fff; font-size:30px; cursor:pointer;}
+
+  /* consistency error overlay */
+  .consistency-error{display:none; position:fixed; inset:0; background:rgba(255,255,255,.97); z-index:300; padding:40px; overflow:auto;}
+  .consistency-error.on{display:block;}
+  .consistency-error h2{color:var(--cr);}
+  .consistency-error ul{color:var(--ink); font-size:14px; line-height:1.9;}
+
+  /* ============ REPORT VIEW (independent read-only document) ============ */
+  #reportView{display:none;}
+  /* Formal 3rd-party inspection-report design tokens (scoped to report only) */
+  .r-root{
+    --en:#646E7A; --ink:#14233A; --ink-2:#2A4A6E; --muted:#5C6672;
+    --line:#E2E6EC; --line-strong:#CBD2DC; --gold:#B8902E;
+    --ok:#157347; --ok-bg:#E7F4EC; --ng:#B42318; --ng-bg:#FBEDE7;
+    --cr:#B42318; --ma:#C2680B; --mi:#1E6FA8; --pend:#9A6700; --pend-bg:#FEF3CD;
+    max-width:780px; margin:0 auto; color:var(--ink); font-family:var(--font-cn); font-size:10pt; line-height:1.5;
+  }
+  /* ---- header (page 1) ---- */
+  .r-head{display:flex; align-items:center; gap:12px; padding:11px 2px 10px; border-bottom:2.5px solid var(--ink); margin-bottom:18px;}
+  .r-logo-img{width:178px;height:38px;object-fit:contain;object-position:left center;display:block;flex:none;}
+  .r-head .r-org{font-size:12.5px; font-weight:700; letter-spacing:.6px; color:var(--ink); font-family:var(--font-en);}
+  .r-head .r-title{margin-left:auto; font-family:var(--font-en); font-size:11px; color:var(--muted); letter-spacing:.5px;}
+  .r-head .r-repno{font-family:var(--font-en); font-size:10.5px; color:var(--ink-2); margin-left:16px; white-space:nowrap;}
+  .r-head .r-repno b{color:var(--ink); font-weight:700;}
+
+  /* ---- section rhythm: L1 navy / L2 gray / L3 text ---- */
+  .r-sec{margin:0 0 18px;}
+  .r-sec-h{font-size:13pt; font-weight:700; color:var(--ink); display:flex; align-items:center; gap:9px; margin:0 0 10px; padding:0 0 6px; border-bottom:1px solid var(--line);}
+  .r-sec-h .num{display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:22px; padding:0 7px; background:var(--ink); color:#fff; border-radius:4px; font-size:10.5pt; font-family:var(--font-en); font-weight:700;}
+  .r-sec-h .en{font-family:var(--font-en); font-weight:500; font-size:9pt; color:var(--en); letter-spacing:.3px; margin-left:auto;}
+  .r-sec-sub{font-size:9.5pt; font-weight:700; color:#5B6B82; margin:13px 0 7px; letter-spacing:.3px; display:flex; align-items:center; gap:8px;}
+  .r-sec-sub .en{font-family:var(--font-en); font-weight:500; font-size:8.5pt; color:var(--muted);}
+
+  /* ---- key-value grid ---- */
+  .r-grid{display:grid; grid-template-columns:1fr 1fr; gap:5px 24px;}
+  .r-grid.three{grid-template-columns:1fr 1fr 1fr;}
+  .r-kv{display:flex; gap:8px; align-items:baseline; font-size:9.5pt;}
+  .r-kv .k{color:var(--muted); min-width:72px; font-weight:600; flex:none;}
+  .r-kv .k .en{font-family:var(--font-en); font-weight:400; font-size:8pt; color:var(--en); display:block;}
+  .r-kv .v{color:var(--ink); font-weight:600;}
+  .r-kv.full{grid-column:1 / -1;}
+  .r-remark{font-size:9pt; color:var(--ink-2); line-height:1.5; margin-top:5px; white-space:pre-wrap;}
+
+  /* ---- tables: compressed ~15%, unified header, wider requirement ---- */
+  .r-tbl{width:100%; border-collapse:collapse; font-size:9pt; margin:5px 0 10px; table-layout:fixed;}
+  .r-tbl thead th{background:var(--ink); color:#fff; font-weight:600; text-align:left; padding:5px 7px; font-size:8.5pt; letter-spacing:.2px; white-space:nowrap; height:22px;}
+  .r-tbl thead th .en{display:block; font-family:var(--font-en); font-weight:400; opacity:.72; font-size:7.5pt; margin-top:1px;}
+  .r-tbl tbody td{border:1px solid var(--line); padding:3.5px 7px; vertical-align:top; color:var(--ink); font-size:9pt; line-height:1.42;}
+  .r-tbl tbody tr:nth-child(even) td{background:#F6F8FA;}
+  .r-tbl .num-r{text-align:right; font-family:var(--font-en);}
+  .r-tbl .center{text-align:center;}
+  .r-it{font-weight:700; font-size:9.2pt; color:var(--ink);}
+  .r-it .en{font-family:var(--font-en); font-size:7.6pt; color:var(--en); font-weight:400; display:block; margin-top:1px; line-height:1.25;}
+  .r-cn{font-size:9pt; color:var(--ink); line-height:1.4;}
+  .r-en{font-family:var(--font-en); font-size:7.6pt; color:var(--en); margin-top:1px; line-height:1.25; font-style:normal;}
+
+  /* ---- badges: uniform fixed width (PASS/FAIL/MI/MA/CR all equal) ---- */
+  .r-tbl .badge{display:inline-flex; align-items:center; justify-content:center; width:100%; max-width:100%; min-width:0; height:19px; padding:0 3px; border-radius:4px; font-size:8.3pt; font-weight:700; font-family:var(--font-en); letter-spacing:.2px; line-height:1; white-space:nowrap;}
+  .r-tbl td.center .badge{margin:0 auto;}
+
+  /* ---- photo layout: Inspection Photo Layout ---- */
+  .r-gpanel{margin:0 0 15px;}
+  .r-gpanel .r-gh{font-size:10.5pt; font-weight:700; color:var(--ink); margin:0 0 7px; display:flex; align-items:center; gap:8px; padding-bottom:5px; border-bottom:1px solid var(--line);}
+  .r-gpanel .r-gh .en{font-family:var(--font-en); font-weight:500; font-size:8.5pt; color:var(--en);}
+  .r-gpanel .r-gh .cnt{margin-left:auto; font-size:8pt; color:var(--muted); font-family:var(--font-en);}
+  .r-grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:9px;}
+  .r-grid3.keep{break-inside:avoid;}
+  .r-img{border:1px solid var(--line-strong); border-radius:4px; overflow:hidden; background:#fff; display:flex; flex-direction:column; break-inside:avoid; max-width:100%;}
+  .r-img .it{width:100%; aspect-ratio:4/3; position:relative; background:#f3f5f8; max-height:140px; overflow:hidden;}
+  .r-img .it img{width:100%; height:100%; object-fit:cover; display:block; object-position:center;}
+  .r-img .ix{position:absolute; top:4px; left:4px; background:var(--ink); color:#fff; font-size:8pt; font-family:var(--font-en); font-weight:700; padding:1px 6px; border-radius:3px;}
+  .r-img .cap{padding:4px 6px; font-size:8.5pt; color:var(--ink); line-height:1.35;}
+  .r-img .cap .cn{font-weight:600;}
+  .r-img .cap .en{font-family:var(--font-en); font-size:7.6pt; color:var(--en); display:block; margin-top:1px; line-height:1.25;}
+
+  /* ---- defect record: + Reference / Photo / Location ---- */
+  .r-defect{border:1px solid var(--line); border-left:3px solid var(--cr); border-radius:4px; padding:9px 11px; margin-bottom:9px; background:#fff; break-inside:avoid;}
+  .r-defect .r-dh{display:flex; align-items:center; gap:8px; margin-bottom:5px; flex-wrap:wrap;}
+  .r-defect .r-dno{width:22px;height:22px;border-radius:50%;background:var(--cr);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--font-en);font-size:11px;flex:none;}
+  .r-defect .r-dtype{font-size:9pt; color:var(--muted); font-family:var(--font-en);}
+  .r-defect .r-dmeta{font-size:8.5pt; color:var(--ink-2); margin-left:auto; display:flex; gap:14px; flex-wrap:wrap;}
+  .r-defect .r-dmeta b{color:var(--ink); font-weight:600;}
+  .r-defect .r-ddesc{font-size:9.5pt; color:var(--ink); line-height:1.45; white-space:pre-wrap; margin-top:2px;}
+
+  /* ---- conclusion + paper-style signature ---- */
+  .r-verdict{border:1.5px solid var(--ok); border-radius:4px; padding:10px 16px; text-align:center; background:var(--ok-bg); margin-bottom:10px;}
+  .r-verdict.ng{border-color:var(--ng); background:var(--ng-bg);}
+  .r-verdict .v-en{font-family:var(--font-en); font-size:8.5pt; color:var(--muted); letter-spacing:1.5px;}
+  .r-verdict .v-cn{font-size:15pt; font-weight:800; color:var(--ok); margin:3px 0; letter-spacing:1px;}
+  .r-verdict.ng .v-cn{color:var(--ng);}
+  .r-dstats{display:flex; gap:16px; flex-wrap:wrap; align-items:center; font-size:9.5pt; color:var(--ink-2); margin-bottom:8px;}
+  .r-conc{font-size:9.5pt; color:var(--ink); line-height:1.55; white-space:pre-wrap; margin-bottom:12px;}
+  .r-sign{display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-top:6px;}
+  .r-sign .sb{border:1px solid var(--line); border-radius:4px; padding:9px 11px;}
+  .r-sign .sb .sk{font-size:9pt; color:var(--muted); font-weight:600; display:block; margin-bottom:20px;}
+  .r-sign .sb .sk .en{font-family:var(--font-en); font-weight:400; font-size:7.8pt; color:var(--en); display:block;}
+  .r-sign .sb .sline{border-bottom:1px solid var(--line-strong); height:20px; margin-bottom:5px;}
+  .r-sign .sb .slabel{font-size:8.5pt; color:var(--muted); font-family:var(--font-en);}
+  .r-conclusion{break-inside:avoid; page-break-inside:avoid;}
+  .r-conclusion .r-verdict,.r-conclusion .r-dstats,.r-conclusion .r-sign{break-inside:avoid; page-break-inside:avoid;}
+
+  /* preview modal (screen) */
+  #previewModal{display:none; position:fixed; inset:0; background:#cfd4da; z-index:250; overflow:auto; padding:18px;}
+  #previewModal.on{display:block;}
+  #previewModal .pm-bar{position:sticky; top:0; display:flex; gap:10px; align-items:center; background:rgba(20,35,58,.97); color:#fff; padding:10px 18px; border-radius:8px; margin-bottom:14px; box-shadow:0 4px 16px rgba(0,0,0,.2);}
+  #previewModal .pm-bar .t{font-weight:700; margin-right:auto; font-size:13px;}
+  #previewModal .pm-bar .btn{font-size:12px; padding:7px 14px;}
+
+  /* ============ PRINT ============ */
+  .no-screen{display:none;}
+  @media print{
+    @page{ size:A4; margin:14mm 14mm 18mm 14mm;
+      @bottom-right{ content:"Page " counter(page) " / " counter(pages); font-family:var(--font-en); font-size:8pt; color:#8a929c; }
+    }
+    html,body{background:#fff !important; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+    /* only the report is printed */
+    .toolbar, #formView, #previewModal, .lightbox, .consistency-error{ display:none !important; }
+    #reportView{ display:block !important; }
+    .r-root{ max-width:100% !important; font-size:10pt !important; }
+    .r-tbl thead th, .r-tbl tbody tr:nth-child(even) td, .badge, .r-verdict,
+    .r-defect, .r-img .it, .r-sign .sb{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .r-tbl tr{ break-inside:avoid; }
+    .r-tbl thead{ display:table-header-group; }
+    .r-tbl tr{ break-inside:avoid; }
+    .r-sec-h{ break-after:avoid; }
+    .r-gh, .r-gpanel > .r-gh{ break-after:avoid; }
+    .r-gpanel{ break-inside:auto; }
+    .r-grid3{ grid-template-columns:repeat(3, 1fr) !important; gap:6px !important; }
+    .r-img{ break-inside:avoid; max-width:100% !important; }
+    .r-img .it{ max-height:120px !important; aspect-ratio:4/3 !important; }
+    .r-img .it img{ object-fit:cover !important; object-position:center !important; }
+    .r-defect{ break-inside:avoid; }
+    .r-sign .sb{ break-inside:avoid; }
+    .r-conclusion{ break-inside:avoid; page-break-inside:avoid; }
+    .r-conclusion .r-verdict,.r-conclusion .r-dstats,.r-conclusion .r-sign{ break-inside:avoid; page-break-inside:avoid; }
+    /* Keep metadata after the report body; a fixed footer overlays page one in headless PDF. */
+    .r-foot{ display:flex !important; position:static !important; height:8mm; margin-top:6mm;
+      border-top:1px solid var(--line-strong); font-family:var(--font-en); font-size:8pt; color:#5C6672;
+      display:flex; align-items:center; gap:18px; padding:0 14mm; background:#fff; z-index:9; }
+    .r-foot b{ color:var(--ink-2); font-weight:700; }
+    .r-foot .rf-conf{ color:var(--cr); font-weight:700; letter-spacing:1px; margin-left:auto; }
+    .r-root{ padding-bottom:0; }
+  }
+  .r-foot{ display:none; }
+</style>
+<style>
+  /* Edit mode follows the QMS shell scale; the gold document language remains for the printable report. */
+  body{font-size:14px;}
+  .toolbar{padding:14px 24px; gap:10px;}
+  .btn{min-height:40px; padding:9px 16px; border-radius:9px; font-size:14px; font-weight:600;}
+  .field label{font-size:13px;}
+  .field input,.field textarea,.field select{min-height:40px; font-size:14px; border-radius:8px;}
+  .section{padding:30px 40px 8px;}
+  .sec-sub{font-size:12px;}
+  @media(max-width:760px){.section{padding:22px 18px 6px}.toolbar{padding:12px 16px}.btn{font-size:13px}}
+</style>
+</head>
+<body>
+
+<!-- ===== Toolbar (form only) ===== -->
+<div class="toolbar no-print">
+  <div class="brand">⬡ Sainstore QIC<span><small>QC Inspection Report Builder</small></span></div>
+  <button class="btn ghost" onclick="resetForm()">清空</button>
+  <button class="btn" onclick="saveDraft(true)">保存草稿</button>
+  <button class="btn" onclick="openPreview()">PDF 预览</button>
+  <button class="btn" onclick="exportBlank()">空白模板</button>
+  <button class="btn primary" onclick="doPrint()">导出 / 打印 PDF</button>
+</div>
+
+<!-- ===== FORM VIEW ===== -->
+<div id="formView">
+<div class="page">
+  <div class="doc-head no-print">
+    <div class="top">
+      <img class="logo-img" src="company_logo.png" alt="SainStore">
+      <div><div class="org">SAINSTORE QUALITY INSPECTION CENTER</div></div>
+    </div>
+    <h1>产品验货报告</h1>
+    <div class="sub">Product Inspection Report</div>
+    <div class="doc-ver">在线验货报告填写 · Inspection Report Form</div>
+    <div class="repno">
+      <div class="k">REPORT NO.</div>
+      <div class="v" id="cover_repno">—</div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+  <!-- 1. Basic Info -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">1</span> 基本信息 <span class="en">General Information</span></div>
+    <div class="sec-sub">验货委托与产品基础信息 · Inspection mandate and product basics</div>
+    <div class="field full" style="margin-bottom:10px;"><label>报告名称 <span class="en">Report Title</span><span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;">（留空则自动用「产品名+日期」）</span></label><input id="f_title" placeholder="如：东莞照明厂_智能台灯Pro_出货前检验_20260715"></div>
+    <div class="grid three">
+      <div class="field"><label>供应商 <span class="en">Supplier</span></label><input id="f_supplier" placeholder="工厂名称 / Factory"></div>
+      <div class="field"><label>验货日期 <span class="en">Inspection Date</span></label><input id="f_date" type="date"></div>
+      <div class="field"><label>产品名称 <span class="en">Product Name</span></label><input id="f_product" placeholder="中文名 / Name"></div>
+      <div class="field"><label>品牌 <span class="en">Brand</span></label><input id="f_brand" placeholder="品牌 / Brand"></div>
+      <div class="field"><label>产品型号 <span class="en">Product Model</span></label><input id="f_model" placeholder="型号 / Model"></div>
+      <div class="field"><label>SKU</span></label><input id="f_sku" placeholder="SKU 编号"></div>
+      <div class="field"><label>检验员 <span class="en">Inspector</span></label><input id="f_inspector" placeholder="提交后用于审核结果通知"></div>
+      <div class="field"><label>PO / 合同号 <span class="en">PO / Contract</span></label><input id="f_po" placeholder="PO number"></div>
+      <div class="field"><label>验货类型 <span class="en">Inspection Type</span></label>
+        <select id="f_type"><option>生产中期 Mid-Production</option><option>出货前 Final</option><option>出货装柜 During Loading</option><option>其他 Other</option></select></div>
+      <div class="field"><label>验货模式 <span class="en">Service</span></label>
+        <select id="f_service"><option>全检 100%</option><option>抽检 AQL</option></select></div>
+      <div class="field"><label>产品资料模式 <span class="en">Product Mode</span></label>
+        <select id="f_productMode"><option value="new">新品（现场照片进入 PDF 第9项）</option><option value="old">旧品（照片仅归档 NAS）</option></select></div>
+      <div class="field full"><label>备注 <span class="en">Remarks</span></label><textarea id="f_remark" placeholder="补充说明 / Remarks"></textarea></div>
+    </div>
+  </div>
+
+  <!-- 2. SKU -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">2</span> 产品型号 <span class="en">Model / SKU</span></div>
+    <div class="sec-sub">同一验货任务下的不同型号与数量 · Models covered and quantities</div>
+    <table class="tbl" id="skuTable">
+      <thead><tr><th style="width:34px" class="center">#</th><th>型号 / SKU<span class="en">Model / SKU</span></th><th>订单号 <span class="en">Order No.</span></th><th class="num-r">订单数量 <span class="en">Order Qty</span></th><th class="num-r">已包装数 <span class="en">Packed Qty</span></th><th class="num-r">未包装数 <span class="en">Unpacked Qty</span></th><th class="num-r">已检验数量 <span class="en">Inspected Qty</span></th><th class="num-r">未检验数量 <span class="en">Uninspected Qty</span></th><th style="width:34px" class="no-print"></th></tr></thead>
+      <tbody id="skuBody"></tbody>
+    </table>
+    <button class="add-row no-print" onclick="addSku()">+ 添加型号</button>
+  </div>
+
+  <!-- 3. Sampling -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">3</span> 抽样方案 <span class="en">Sampling Plan</span></div>
+    <div class="sec-sub">基于 AQL 的抽样与接收准则 · AQL-based sampling and acceptance</div>
+    <div class="grid three">
+      <div class="field"><label>检验水平 <span class="en">Inspection Level</span></label>
+        <select id="s_level"><option>General Inspection Level II</option><option>General Inspection Level I</option><option>General Inspection Level III</option><option>Special S-1</option><option>Special S-2</option><option>Special S-3</option><option>Special S-4</option></select></div>
+      <div class="field"><label>批量 Lot Size <span class="en">Lot Size (pcs)</span></label><input id="s_lot" type="number" placeholder="0"></div>
+      <div class="field"><label>样本量 Sample Size <span class="en">Sample Size (pcs)</span></label><input id="s_sample" type="number" placeholder="0"></div>
+      <div class="field"><label>抽样标准 <span class="en">Standard</span></label>
+        <select id="s_std"><option>ANSI/ASQ Z1.4 (等同 GB/T 2828.1)</option><option>ISO 2859-1</option><option>MIL-STD-105E</option></select></div>
+    </div>
+    <div class="sub-sec">
+      <h3>3.1 接收准则 (AQL) <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Acceptance Criteria</span></h3>
+      <table class="tbl" id="smpTable">
+        <thead><tr>
+          <th>等级 <span class="en">Level</span></th>
+          <th class="num-r">AQL</th>
+          <th class="center">Ac</th>
+          <th class="center">Re</th>
+          <th class="num-r">实际不良数 <span class="en">Actual</span></th>
+          <th class="center">判定 <span class="en">Verdict</span></th>
+        </tr></thead>
+        <tbody>
+          <tr data-sev="CR"><td><span class="fx-item">致命 Critical</span></td>
+            <td><input id="s_aql_cr" class="num-r" value="0"></td>
+            <td><input id="s_ac_cr" class="num-r center" placeholder="0"></td>
+            <td><input id="s_re_cr" class="num-r center" placeholder="0"></td>
+            <td class="num-r" id="s_act_cr">0</td>
+            <td class="center" id="s_v_cr"></td></tr>
+          <tr data-sev="MA"><td><span class="fx-item">主要 Major</span></td>
+            <td><input id="s_aql_ma" class="num-r" value="2.5"></td>
+            <td><input id="s_ac_ma" class="num-r center" placeholder="0"></td>
+            <td><input id="s_re_ma" class="num-r center" placeholder="0"></td>
+            <td class="num-r" id="s_act_ma">0</td>
+            <td class="center" id="s_v_ma"></td></tr>
+          <tr data-sev="MI"><td><span class="fx-item">次要 Minor</span></td>
+            <td><input id="s_aql_mi" class="num-r" value="4.0"></td>
+            <td><input id="s_ac_mi" class="num-r center" placeholder="0"></td>
+            <td><input id="s_re_mi" class="num-r center" placeholder="0"></td>
+            <td class="num-r" id="s_act_mi">0</td>
+            <td class="center" id="s_v_mi"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4. Fixed inspection items -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">4</span> 检验项目 <span class="en">Inspection Items</span></div>
+    <div class="sec-sub">订单完成度 / 产品资料 / 尺寸 / 重量 / 标签 / 外观 · Core modules</div>
+
+    <div class="sub-sec">
+      <h3>4.1 订单完成度 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Order Completion</span></h3>
+      <table class="tbl fx-tbl" id="orderTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>检验项目 <span class="en">Item</span></th>
+        <th>标准要求 <span class="en">Requirement</span></th>
+        <th>实测结果 <span class="en">Actual Result</span></th>
+        <th class="center" style="width:70px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addFixedRow('orderTable')">+ 添加检验项</button>
+    </div>
+
+    <div class="sub-sec">
+      <h3>4.2 产品资料 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Product Documentation</span></h3>
+      <table class="tbl fx-tbl" id="docTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>文件 <span class="en">Document</span></th>
+        <th>标准要求 <span class="en">Requirement</span></th>
+        <th>实测结果 <span class="en">Actual Result</span></th>
+        <th class="center" style="width:70px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addFixedRow('docTable')">+ 添加检验项</button>
+    </div>
+
+    <div class="sub-sec">
+      <h3>4.3 尺寸 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Dimensions</span></h3>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;">尺寸单位是cm，重量单位是kg</div>
+      <table class="tbl fx-tbl" id="dimFxTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>类别 <span class="en">Type</span></th>
+        <th style="width:70px">长 <span class="en">Length</span></th>
+        <th style="width:70px">宽 <span class="en">Width</span></th>
+        <th style="width:70px">高 <span class="en">Height</span></th>
+        <th style="width:70px">直径 <span class="en">Diameter</span></th>
+        <th class="center" style="width:60px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addDimRow()">+ 添加尺寸行</button>
+    </div>
+
+    <div class="sub-sec">
+      <h3>4.4 重量 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Weight</span></h3>
+      <table class="tbl fx-tbl" id="wtFxTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>SKU</th>
+        <th style="width:75px">净重 <span class="en">Net Wt</span></th>
+        <th style="width:75px">毛重 <span class="en">Gross Wt</span></th>
+        <th style="width:85px">单个包装 <span class="en">Unit Pkg</span></th>
+        <th class="center" style="width:60px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addWtRow()">+ 添加重量行</button>
+    </div>
+
+    <div class="sub-sec">
+      <h3>4.5 标签与标识 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Labeling &amp; Marking</span></h3>
+      <table class="tbl fx-tbl" id="labelTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>标签项 <span class="en">Label Item</span></th>
+        <th>标准要求 <span class="en">Requirement</span></th>
+        <th>实测结果 <span class="en">Actual Result</span></th>
+        <th class="center" style="width:70px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addFixedRow('labelTable')">+ 添加检验项</button>
+    </div>
+
+    <div class="sub-sec">
+      <h3>4.6 外观细节 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Appearance Details</span></h3>
+      <table class="tbl fx-tbl" id="appTable"><thead><tr>
+        <th style="width:34px" class="center">#</th>
+        <th>检查点 <span class="en">Check Point</span></th>
+        <th>标准要求 <span class="en">Requirement</span></th>
+        <th>实测结果 <span class="en">Actual Result</span></th>
+        <th class="center" style="width:70px">不良数 <span class="en">Def</span></th>
+        <th style="width:80px" class="center">结果 <span class="en">Result</span></th>
+        <th class="center" style="width:60px">等级 <span class="en">Sev</span></th>
+        <th class="no-print" style="width:30px"></th>
+      </tr></thead><tbody></tbody></table>
+      <button class="add-row no-print" onclick="addFixedRow('appTable')">+ 添加检验项</button>
+    </div>
+  </div>
+
+  <!-- 5. Function & Safety -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">5</span> 功能测试 <span class="en">Function Test</span></div>
+    <div class="sec-sub">功能与安规检测 · Function & Safety Tests</div>
+    <div class="sub-sec" id="funcSub">
+      <h3>5.1 功能检验 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Function Test</span>
+        <button class="copy-prev no-print" onclick="copyPrev('funcBody')">⧉ 复制上一项</button></h3>
+      <div class="dyn-wrap">
+      <table class="dyn" id="funcTable"><colgroup>
+        <col class="c-no"><col class="c-item"><col class="c-std"><col class="c-act"><col class="c-qty"><col class="c-res"><col class="c-sev"><col class="c-del">
+      </colgroup>
+        <thead><tr>
+          <th class="center">#</th>
+          <th>测试项目 <span class="en">Item</span></th>
+          <th>标准要求 <span class="en">Requirement</span></th>
+          <th>实测结果 <span class="en">Actual Result</span></th>
+          <th class="center">不良数 <span class="en">Def</span></th>
+          <th class="center">结果 <span class="en">Result</span></th>
+          <th class="center">等级 <span class="en">Sev</span></th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody id="funcBody"></tbody>
+      </table>
+      </div>
+      <button class="add-row no-print" onclick="addDyn('funcBody','func')">+ 添加功能检验</button>
+    </div>
+
+    <div class="sub-sec" id="safeSub">
+      <h3>5.2 安规检测 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Safety Test</span>
+        <button class="copy-prev no-print" onclick="copyPrev('safeBody')">⧉ 复制上一项</button></h3>
+      <div class="dyn-wrap">
+      <table class="dyn" id="safeTable"><colgroup>
+        <col class="c-no"><col class="c-item"><col class="c-std"><col class="c-act"><col class="c-qty"><col class="c-res"><col class="c-sev"><col class="c-del">
+      </colgroup>
+        <thead><tr>
+          <th class="center">#</th>
+          <th>测试项目 <span class="en">Item</span></th>
+          <th>标准要求 <span class="en">Requirement</span></th>
+          <th>实测结果 <span class="en">Actual Result</span></th>
+          <th class="center">不良数 <span class="en">Def</span></th>
+          <th class="center">结果 <span class="en">Result</span></th>
+          <th class="center">等级 <span class="en">Sev</span></th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody id="safeBody"></tbody>
+      </table>
+      </div>
+      <button class="add-row no-print" onclick="addDyn('safeBody','safe')">+ 添加安规检测</button>
+    </div>
+  </div>
+
+  <!-- 6. Reliability -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">6</span> 可靠性测试 <span class="en">Reliability Test</span></div>
+    <div class="sec-sub">跌落 / 防水 / 老化等可靠性验证 · Drop / Waterproof / Aging etc.</div>
+    <div class="sub-sec" id="relSub">
+      <h3>6.1 可靠性检验 <span style="font-family:var(--font-en);font-weight:400;font-size:11px;color:var(--muted)">Reliability Items</span>
+        <button class="copy-prev no-print" onclick="copyPrev('relBody')">⧉ 复制上一项</button></h3>
+      <div class="dyn-wrap">
+      <table class="dyn" id="relTable"><colgroup>
+        <col class="c-no"><col class="c-item"><col class="c-std"><col class="c-act"><col class="c-qty"><col class="c-res"><col class="c-sev"><col class="c-del">
+      </colgroup>
+        <thead><tr>
+          <th class="center">#</th>
+          <th>测试项目 <span class="en">Item</span></th>
+          <th>标准要求 <span class="en">Requirement</span></th>
+          <th>实测结果 <span class="en">Actual Result</span></th>
+          <th class="center">不良数 <span class="en">Def</span></th>
+          <th class="center">结果 <span class="en">Result</span></th>
+          <th class="center">等级 <span class="en">Sev</span></th>
+          <th class="no-print"></th>
+        </tr></thead>
+        <tbody id="relBody"></tbody>
+      </table>
+      </div>
+      <button class="add-row no-print" onclick="addDyn('relBody','rel')">+ 添加可靠性检验</button>
+    </div>
+  </div>
+
+  <!-- 7. Defects -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">7</span> 缺陷记录 <span class="en">Defect Record</span></div>
+    <div class="sec-sub">发现的缺陷及分类 · Defects found and classification</div>
+    <div id="defectList"></div>
+    <button class="add-row no-print" onclick="addDefectEntry()">+ 添加缺陷</button>
+    <div id="defectSummary" style="margin-top:14px;font-size:13px;color:var(--ink-2);font-weight:600;"></div>
+  </div>
+
+  <!-- 8. Conclusion (moved from 9) -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">8</span> 检验结论 <span class="en">Conclusion</span></div>
+    <div class="sec-sub">总体判定与签字 · Overall verdict and sign-off</div>
+    <div class="conc-grid">
+      <div>
+        <div class="field"><label>总体判定 <span class="en">Overall Result</span></label>
+          <select id="f_verdict" onchange="_verdictManual=true;updateVerdictBox()">
+            <option value="PENDING" selected>PENDING 待定</option>
+            <option value="PASS">PASS 通过</option>
+            <option value="FAIL">FAIL 不合格</option>
+            <option value="PENDING">PENDING 待定</option>
+          </select><button type="button" class="btn ghost" style="margin-left:6px;font-size:11px;padding:2px 8px" onclick="_verdictManual=false;refreshAll()" title="恢复 AQL 自动判定">↺ 自动</button></div>
+        <div id="verdictBox" class="verdict-box" style="margin-top:14px;">
+          <div class="v-en">OVERALL VERDICT</div>
+          <div class="v-cn" id="verdictCn">PENDING 待定</div>
+        </div>
+        <div class="field full" style="margin-top:14px;"><label>缺陷统计 <span class="en">Defect Statistics (auto)</span></label>
+          <div class="dstats" id="defectStats"></div></div>
+        <div class="field full" style="margin-top:14px;"><label>结论说明 <span class="en">Summary</span></label>
+          <textarea id="f_conc" placeholder="检验结论描述 / Conclusion summary"></textarea></div>
+      </div>
+      <div>
+        <div class="sign-row">
+          <div class="sign-box"><label>验货员 Inspector</label><input id="f_sign1" placeholder="签字 / Signature"></div>
+          <div class="sign-box"><label>审核人 Reviewer</label><input id="f_sign2" placeholder="签字 / Signature"></div>
+        </div>
+        <div class="field full" style="margin-top:16px;"><label>客户 / 工厂确认 Client / Factory</label>
+          <input id="f_sign3" placeholder="确认意见 / Confirmation"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Photos (moved from 8) -->
+  <div class="section">
+    <div class="sec-title"><span class="bar"></span><span class="num">9</span> 现场照片 <span class="en">Site Photos</span></div>
+    <div class="sec-sub">按类别归档 · Photos by category</div>
+    <div id="galleries"></div>
+  </div>
+
+  </div><!-- /doc-body -->
+</div><!-- /page -->
+</div><!-- /formView -->
+
+<!-- ===== REPORT VIEW (independent read-only document) ===== -->
+<div id="reportView"></div>
+
+<!-- ===== Preview modal ===== -->
+<div id="previewModal">
+  <div class="pm-bar no-print">
+    <div class="t">PDF 预览 · Preview</div>
+    <button class="btn" onclick="closePreview()">返回编辑</button>
+    <button class="btn primary" onclick="window.print()">打印 / 导出 PDF</button>
+  </div>
+  <div id="previewRoot"></div>
+</div>
+
+<!-- consistency error overlay -->
+<div class="consistency-error" id="consErr">
+  <h2>⛔ 数据一致性校验未通过 — 已禁止生成正式 PDF</h2>
+  <ul id="consErrList"></ul>
+  <button class="btn primary" onclick="document.getElementById('consErr').classList.remove('on')">关闭并返回修改</button>
+</div>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <span class="lb-close" onclick="closeLightbox()">✕</span>
+  <span class="lb-nav" style="left:0" onclick="lbStep(-1)">‹</span>
+  <img id="lbImg" src="" alt="">
+  <span class="lb-nav" style="right:0" onclick="lbStep(1)">›</span>
+  <div class="lb-cap" id="lbCap"></div>
+</div>
+
+<template id="dynRowTpl"><tr class="dyn-row">
+  <td class="no-col center"></td>
+  <td><input class="izh" placeholder="测试项目(中)"><input class="ien pending" placeholder="English / 待翻译"></td>
+  <td><textarea class="spec-cn" placeholder="标准要求(中)"></textarea><input class="spec-en pending" placeholder="Requirement (EN) / 待翻译"></td>
+  <td><textarea class="meas-cn" placeholder="实测结果(中)"></textarea><input class="meas-en pending" placeholder="Actual (EN) / 待翻译"></td>
+  <td><input class="dyn-qty" type="number" min="0" value="0"></td>
+  <td><select class="res"><option>Pass</option><option>Fail</option><option>Pending</option><option>N/A</option></select></td>
+  <td><select class="sev"><option>MI</option><option>MA</option><option>CR</option></select></td>
+  <td class="no-print"><button class="row-del" onclick="this.closest('tr').remove();renumber('funcBody');renumber('safeBody')">×</button></td>
+</tr></template>
+
+<script>
+/* ===================== Template version (footer only) ===================== */
+const TEMPLATE_VERSION = 'QC-REPORT-V1.0';   // 模板版本（页脚）
+const REPORT_REVISION = 'Rev.0';               // 报告修订（页脚）
+/* ===================== Dictionaries (exact-match only) ===================== */
+const TERM_EN = {
+  "通电测试":"Power-on Test","关机测试":"Power-off Test","按键功能":"Key Function","显示功能":"Display Function",
+  "灯光测试":"Lighting Test","加热功能":"Heating Function","制冷功能":"Cooling Function","噪音测试":"Noise Test",
+  "转速测试":"Rotation Speed Test","定时功能":"Timer Function","遥控功能":"Remote Control","蓝牙连接":"Bluetooth Pairing",
+  "Wi-Fi连接":"Wi-Fi Connection","充电功能":"Charging Function","续航测试":"Battery Endurance","称重功能":"Weighing Function",
+  "水温测试":"Water Temperature","水位检测":"Water Level Detection","漏电保护":"Leakage Protection","接地测试":"Grounding Test",
+  "耐压测试":"Hi-Pot Test","绝缘电阻":"Insulation Resistance","温升测试":"Temperature Rise","过载保护":"Overload Protection",
+  "短路保护":"Short-circuit Protection","防火测试":"Flammability Test","辐射测试":"Radiation Test","电磁兼容":"EMC Test",
+  "能效测试":"Energy Efficiency","防水测试":"Waterproof Test","防潮测试":"Moisture Resistance","摇摆测试":"Swing Test",
+  "跌落测试":"Drop Test","拉力测试":"Tensile Test","扭力测试":"Torque Test","寿命测试":"Life Cycle Test",
+  "包装振动":"Package Vibration","标签检查":"Label Check","条码可读性":"Barcode Readability","说明书齐全":"Manual Completeness",
+  /* 常用补充 */
+  "启动测试":"Start-up Test","待机功耗":"Standby Power","温度控制":"Temp Control","速度调节":"Speed Control",
+  "音量测试":"Volume Test","屏幕触摸":"Touch Screen","接口检测":"Port Check","USB测试":"USB Test",
+  "HDMI输出":"HDMI Output","音频输出":"Audio Output","摄像头测试":"Camera Test","传感器测试":"Sensor Test",
+  "震动测试":"Vibration Test","冲击测试":"Impact Test","盐雾测试":"Salt Spray Test","老化测试":"Aging Test",
+  "恒温恒湿":"Temp/Humidity Test","紫外线测试":"UV Test","RoHS合规":"RoHS Compliance","REACH合规":"REACH Compliance",
+  "跌落高度":"Drop Height","堆码测试":"Stacking Test","挤压测试":"Compression Test","运输振动":"Transit Vibration",
+  "订单数量核对":"Order quantity check","包装数量确认":"Pack quantity confirmation","资料":"Documents","物料":"Materials","变更":"Change",
+  "标签":"Label","扫描":"","出货国家":"","装箱数":"","出货方式":"","认证":"",
+  "划痕/碰伤":"Scratch / Dent","污渍/水痕":"Stain / Water mark","色差":"Color difference","logo/丝印":"Logo / Silk print",
+  "跌落":"Drop","防水测试":"Waterproof Test"
+};
+const REQ_EN = {
+  "功能正常":"Function normal","外观无缺陷":"No appearance defect","无划痕":"No scratch","无脏污":"No stain",
+  "无变形":"No deformation","无异味":"No odor","颜色一致":"Color consistent","印刷清晰":"Printing clear",
+  "装配牢固":"Assembly secure","缝隙均匀":"Even gap","按键灵敏":"Keys responsive","显示正常":"Display normal",
+  "噪音≤45dB":"Noise ≤ 45 dB","升温达标":"Heating reaches spec","温度稳定":"Temperature stable","定时准确":"Timer accurate",
+  "蓝牙连接正常":"Bluetooth pairs normally","Wi-Fi连接正常":"Wi-Fi connects normally","充电正常":"Charging normal",
+  "续航达标":"Endurance meets spec","称重准确":"Weighing accurate","水温达标":"Water temp meets spec","漏电保护有效":"Leakage protection effective",
+  "接地电阻≤0.1Ω":"Ground resistance ≤ 0.1 Ω","耐压通过":"Hi-Pot passed","绝缘电阻≥10MΩ":"Insulation ≥ 10 MΩ",
+  "温升≤60K":"Temperature rise ≤ 60 K","过载保护有效":"Overload protection effective","短路保护有效":"Short-circuit protection effective",
+  "通过防火测试":"Flammability passed","辐射达标":"Radiation within limit","EMC达标":"EMC compliant","能效达标":"Energy efficiency meets grade",
+  "防水等级IPX4":"Waterproof IPX4","防潮合格":"Moisture resistant","通过摇摆测试":"Swing test passed","通过跌落测试":"Drop test passed",
+  "拉力达标":"Tensile meets spec","扭力达标":"Torque meets spec","寿命达标":"Life cycle meets spec","包装无破损":"Packaging intact",
+  "标签正确":"Label correct","条码可读":"Barcode readable","说明书齐全":"Manual attached",
+  /* 常用补充 */
+  "符合要求":"Meets requirement","符合规格":"Meets specification","合格":"Pass / Qualified","不合格":"Fail / Non-conforming",
+  "数量正确":"Quantity correct","型号正确":"Model correct","参数正确":"Specs correct","标识完整":"Markings complete",
+  "无破损":"No damage","无泄漏":"No leakage","无松动":"No looseness","无异响":"No abnormal sound",
+  "表面光滑":"Surface smooth","边缘圆润":"Edge rounded","涂层均匀":"Coating uniform","焊点可靠":"Solder joints reliable",
+  "线束整齐":"Wiring tidy","接插件牢固":"Connector secure","螺丝紧固":"Screw tight","密封良好":"Sealing good",
+  "材质正确":"Material correct","尺寸正确":"Dimension correct","重量正确":"Weight correct","日期正确":"Date correct"
+};
+const CAP_EN = {
+  "整机正面":"Front view","整机背面":"Rear view","整机侧面":"Side view","包装正面":"Packaging front",
+  "包装侧面":"Packaging side","外箱":"Outer carton","铭牌":"Nameplate","标签特写":"Label close-up",
+  "接口细节":"Port detail","按键细节":"Key detail","缺陷位置":"Defect location","划痕特写":"Scratch close-up",
+  "产线概览":"Production line","验货现场":"Inspection site","抽检样品":"Sampled units"
+};
+
+/* ===================== Helpers ===================== */
+function $(id){return document.getElementById(id);}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(d){ if(!d) return ''; const dt=new Date(d); if(isNaN(dt)) return d; const p=n=>String(n).padStart(2,'0'); return dt.getFullYear()+'-'+p(dt.getMonth()+1)+'-'+p(dt.getDate()); }
+function nowStr(){ const dt=new Date(); const p=n=>String(n).padStart(2,'0'); return dt.getFullYear()+'-'+p(dt.getMonth()+1)+'-'+p(dt.getDate())+' '+p(dt.getHours())+':'+p(dt.getMinutes()); }
+function badgeClass(v, mode){
+  v=(v||'').toString().trim();
+  if(mode==='sev'){ return v==='CR'?'b-cr': v==='MA'?'b-ma': v==='MI'?'b-mi': v==='N/A'?'b-na':'b-na'; }
+  if(mode==='verdict'){ return v==='PASS'?'b-pass': v==='FAIL'?'b-fail': v==='PENDING'?'b-pending':'b-na'; }
+  return v==='Pass'?'b-pass': v==='Fail'?'b-fail': v==='Pending'?'b-pending': v==='N/A'?'b-na':'b-na';
+}
+function badgeHTML(v, mode){ return '<span class="badge '+badgeClass(v,mode)+'">'+esc(v)+'</span>'; }
+function enOf(dict, cn, fallback){ if(cn && dict[cn]) return dict[cn]; return fallback||''; }
+/* numeric sanitizer: fullwidth period/comma -> English dot */
+function sanitizeNum(v){ if(typeof v!=='string') v=String(v||''); return v.replace(/[。．]/g,'.').replace(/[，、]/g,'.'); }
+function bindNumSanitize(el){ if(!el) return; el.addEventListener('input',()=>{ const s=sanitizeNum(el.value); if(s!==el.value){ const p=el.selectionStart; el.value=s; if(p)el.setSelectionRange(p,p);} }); }
+
+/* ===================== Local compositional translation ===================== */
+const CN_EN_SEGMENTS = {
+  "表面无划痕":"No scratches on the surface","表面无缺陷":"Surface free of defects","无可见缺陷":"No visible defects",
+  "清洁、无异物":"Clean and free of foreign matter","边缘圆润、无毛刺":"Rounded edges, no burrs","结构稳固、无变形":"Structure secure, no deformation",
+  "提供正式验货报告":"Formal inspection report provided","中英文说明书齐全":"Chinese and English manuals complete","具备必要认证":"Required certifications provided",
+  "具备CE认证":"CE certification provided","与封样一致":"Consistent with approved sample","表面洁净":"Surface clean",
+  "保护充分、无破损":"Adequately protected, no damage","瓦楞箱完好":"Corrugated carton intact","与订单一致":"Matches the order",
+  "封箱牢固":"Carton securely sealed","箱唛清晰可读":"Shipping mark clear and readable","标注正确":"Correctly labeled","完整标注":"Fully labeled",
+  "必要警示齐全":"Required warnings complete","清晰、位置正确":"Clear and correctly positioned","标识对应正确":"Marking matches the function","位置正确":"Correct position","表面无划痕、位置正确":"No scratches on the surface, correct position",
+  "实测结果":"Actual result","标准要求":"Requirement","检验项目":"Inspection item","验货报告":"Inspection report",
+  "验货日期":"Inspection date","产品名称":"Product name","产品型号":"Product model","验货类型":"Inspection type",
+  "验货模式":"Inspection mode","验货员":"Inspector","供应商":"Supplier","品牌":"Brand","备注":"Remarks",
+  "批量":"Lot size","样本量":"Sample size","抽样标准":"Sampling standard","现场照片":"Site photos",
+  "照片说明":"Photo caption","缺陷描述":"Defect description","缺陷记录":"Defect record","位置":"Location",
+  "分产品摆放":"Product placement","产品资料":"Product documents","尺寸测量":"Dimension measurement","称重":"Weighing",
+  "标签":"Label","条码":"Barcode","功能测试":"Function test","安规检测":"Safety inspection","跌落测试":"Drop test",
+  "其他检测":"Other inspection","正常":"Normal","正确":"Correct","完整":"Complete","合格":"Qualified",
+  "不合格":"Non-conforming","符合要求":"Meets requirements","数量":"Quantity","日期":"Date","型号":"Model",
+  "项目":"Item","结果":"Result","要求":"Requirement","标准":"Standard","实测":"Actual","观察":"Observation",
+  "测试":"Test","检查":"Check","检验":"Inspection","产品":"Product","资料":"Documents","照片":"Photos",
+  "现场":"Site","尺寸":"Dimension","重量":"Weight","缺陷":"Defect","整体":"Overall","正面":"Front",
+  "背面":"Rear","侧面":"Side","包装":"Packaging","清晰":"Clear","通过":"Passed","失败":"Failed",
+  "发现":"Found","未发现":"None found","轻微":"Minor","严重":"Severe","主要":"Major","致命":"Critical"
+};
+Object.assign(CN_EN_SEGMENTS, TERM_EN, REQ_EN, CAP_EN);
+function translateCn(value, dict){
+  const val=(value||'').trim(); if(!val) return '';
+  if(dict&&dict[val]) return dict[val];
+  if(CN_EN_SEGMENTS[val]) return CN_EN_SEGMENTS[val];
+  let out=val, changed=false;
+  Object.keys(CN_EN_SEGMENTS).sort((a,b)=>b.length-a.length).forEach(cn=>{
+    if(out.includes(cn)){ out=out.split(cn).join(' '+CN_EN_SEGMENTS[cn]+' '); changed=true; }
+  });
+  out=out.replace(/[，、；：]/g, ', ').replace(/[。！？]/g, '. ');
+  return changed ? out.replace(/\s+/g,' ').trim() : '';
+}
+function hasCjk(value){ return /[\u3400-\u9fff]/.test(String(value||'')); }
+function preferredTranslation(value, dict){
+  const exact=(dict&&dict[value])||TERM_EN[value]||REQ_EN[value]||CN_EN_SEGMENTS[value]||'';
+  return exact || translateCn(value,dict);
+}
+function englishValue(cn, en, dict){
+  const current=(en||'').trim();
+  // 过滤翻译中的占位符（"Translating..." / "Translation pending" 等），
+  // 防止竞态提交时把占位符文本当有效英文存入 data_json 或渲染进 PDF。
+  if(current && !/^✓/.test(current) && !/[\u3400-\u9fff]/.test(current) && !/translat|pending|please confirm/i.test(current)) return current;
+  const translated=translateCn(cn,dict);
+  return (translated && !hasCjk(translated)) ? translated : '';
+}
+/*
+ * PDF/保存阶段只允许读取已经生成并确认的英文，不能再次根据中文推导翻译。
+ * 翻译只发生在用户编辑中文字段时（autoTranslate）。
+ */
+function storedEnglish(value){
+  const s=String(value||'').trim();
+  if(!s || hasCjk(s) || /translat|pending|please confirm|待翻译/i.test(s)) return '';
+  return s;
+}
+const translationCache=new Map(), translationQueue=[]; let translationActive=0;
+function pumpTranslations(){
+  while(translationActive<6 && translationQueue.length){
+    const job=translationQueue.shift(); translationActive++;
+    (async()=>{
+      let translated='';
+      try{
+        const resp=await fetch('/api/translate?q='+encodeURIComponent(job.value));
+        const data=await resp.json();
+        if(data.ok && data.translated && !hasCjk(data.translated)) translated=data.translated.trim();
+      }catch(e){}
+      if(translated){
+        translationCache.set(job.value,translated);
+        _hydrateChanged=true;
+      }
+      if(job.cnEl.value.trim()===job.value){
+        job.enEl.value=translated||'Translation pending - please confirm';
+        job.enEl.classList.remove('pending');
+        // 异步翻译完成后再次保存，避免 800ms 自动保存先落盘空英文。
+        try { saveDraft(false); } catch(e) {}
+      }
+      translationActive--; job.resolve(!!translated); pumpTranslations();
+    })();
+  }
+}
+/** 等待所有排队的翻译任务完成（用于提交前确保 itemEn 已填入最终值）。 */
+function waitForTranslations(){
+  if(!translationQueue.length && !translationActive) return Promise.resolve();
+  return new Promise(resolve=>{
+    const check=()=>{
+      if(!translationQueue.length && !translationActive) resolve(); else setTimeout(check, 200);
+    };
+    setTimeout(check, 300);
+  });
+}
+function translateByService(value, cnEl, enEl){
+  value=(value||'').trim();
+  if(!value) return Promise.resolve(false);
+  const cached=translationCache.get(value);
+  if(cached){ if(cnEl.value.trim()===value){ enEl.value=cached; enEl.classList.remove('pending'); } return Promise.resolve(true); }
+  return new Promise(resolve=>{ translationQueue.push({value,cnEl,enEl,resolve}); pumpTranslations(); });
+}
+const _deb={};
+let _transSeq=0;
+function autoTranslate(cnEl, enEl, dict){
+  if(!cnEl) return;
+  // Each field needs its own debounce slot. A class-based key caused a table
+  // restore to cancel all but the last translation request in that table.
+  const tid=cnEl.dataset.transId||(cnEl.dataset.transId='tr_'+(++_transSeq));
+  function autoResize(){ if(cnEl.tagName==='TEXTAREA'){ cnEl.style.height='auto'; cnEl.style.height=Math.max(34,cnEl.scrollHeight)+'px'; } }
+  cnEl.addEventListener('input',()=>{
+    clearTimeout(_deb[tid]); autoResize();
+    _deb[tid]=setTimeout(()=>{
+      const val=cnEl.value.trim();
+      if(!val){ if(enEl){ enEl.value=''; enEl.classList.add('pending'); } return; }
+      const found=preferredTranslation(val,dict);
+      if(enEl){
+        if(found && !hasCjk(found)){ enEl.value=found; enEl.classList.remove('pending'); }
+        else { enEl.value='Translating...'; enEl.classList.remove('pending'); enEl.placeholder='English translation'; translateByService(val,cnEl,enEl); }
+      }
+    },250);
+  });
+  cnEl.addEventListener('blur',()=>{ clearTimeout(_deb[tid]); autoResize(); cnEl.dispatchEvent(new Event('input')); });
+  setTimeout(autoResize,50);
+}
+/**
+ * 恢复报告时只补齐明确缺失的英文，不覆盖已有英文。
+ * 本地词典优先；词典没有覆盖的历史空英文才调用一次翻译服务。
+ */
+function hydrateMissingTranslations(){
+  /* ── Dynamic table: .izh→.ien, .spec-cn→.spec-en, .meas-cn→.meas-en ── */
+  document.querySelectorAll('.dyn-row').forEach(function(row){
+    // 检验项 izh → ien
+    var _izh=row.querySelector('.izh'), _ien=row.querySelector('.ien');
+    if(_izh && _ien && _izh.value.trim()) hydrateOne(_izh,_ien,TERM_EN);
+    // 标准要求 spec-cn → spec-en
+    var _sc=row.querySelector('.spec-cn'), _se=row.querySelector('.spec-en');
+    if(_sc && _se && _sc.value.trim()) hydrateOne(_sc,_se,REQ_EN);
+    // 实测结果 meas-cn → meas-en
+    var _mc=row.querySelector('.meas-cn'), _me=row.querySelector('.meas-en');
+    if(_mc && _me && _mc.value.trim()) hydrateOne(_mc,_me,REQ_EN);
+  });
+  /* ── Fixed table: .fx-item-cn→.fx-item-en, .fx-std-cn→.fx-std-en, .fx-obs-cn→.fx-obs-en ── */
+  document.querySelectorAll('.fx-row').forEach(function(row){
+    var _ic=row.querySelector('.fx-item-cn'), _ie=row.querySelector('.fx-item-en');
+    if(_ic && _ie && _ic.value.trim()) hydrateOne(_ic,_ie,TERM_EN);
+    var _sc=row.querySelector('.fx-std-cn'), _se=row.querySelector('.fx-std-en');
+    if(_sc && _se && _sc.value.trim()) hydrateOne(_sc,_se,REQ_EN);
+    var _oc=row.querySelector('.fx-obs-cn'), _oe=row.querySelector('.fx-obs-en');
+    if(_oc && _oe && _oc.value.trim()) hydrateOne(_oc,_oe,REQ_EN);
+  });
+  // 历史报告的英文补齐后，异步回写一次服务器 data_json；否则只保存在
+  // 浏览器 localStorage，下一次从服务器打开仍会再次显示“待翻译”。
+  setTimeout(scheduleHydrationServerSave, 0);
+}
+/** Helper: if EN is empty/pending/CJK and has no valid non-CJK translation, fill it. */
+let _hydratePending=0, _hydrateChanged=false, _hydrateSaveTimer=null, _hydrateSaveSent=false;
+function hydrateOne(cnEl,enEl,dict){
+  var cn=(cnEl.value||'').trim(); if(!cn) return;
+  var en=(enEl.value||'').trim();
+  // 已有英文时原样保留，恢复阶段不重新翻译。
+  if(en && !hasCjk(en) && !/translat|pending|please confirm|待翻译/i.test(en)) return;
+  var found=preferredTranslation(cn,dict);
+  if(found && !hasCjk(found)){ enEl.value=found; enEl.classList.remove('pending'); _hydrateChanged=true; }
+  else {
+    // 仅补齐“英文为空”的历史数据；已有英文不会再次调用服务翻译。
+    enEl.value='Translating...';
+    enEl.classList.remove('pending');
+    _hydratePending++;
+    translateByService(cn,cnEl,enEl).finally(function(){
+      _hydratePending=Math.max(0,_hydratePending-1);
+      if(!_hydratePending) scheduleHydrationServerSave();
+    });
+  }
+}
+function scheduleHydrationServerSave(){
+  if(!_hydrateChanged || _hydratePending || _hydrateSaveSent || _locked || !window._qmsReportId) return;
+  if(_hydrateSaveTimer) clearTimeout(_hydrateSaveTimer);
+  _hydrateSaveTimer=setTimeout(function(){
+    if(_hydratePending || _hydrateSaveSent || _locked || !window._qmsReportId) return;
+    _hydrateSaveSent=true;
+    try{
+      Streamlit.setComponentValue({type:'save_draft', data:collect(), reason:'translation_hydrate'});
+    }catch(e){ _hydrateSaveSent=false; console.warn('[TranslationPersist] server save failed',e); }
+  },300);
+}
+
+/* ===================== Build fixed tables ===================== */
+const FIXED = {
+  orderTable:[
+    ["订单数量核对","Order quantity check","与PO订单数量一致","与PO一致","0","Pass","MI"],
+    ["包装数量确认","Pack quantity confirmation","已包装数=订单数量","已包装数=订单数量","0","Pass","MI"],
+  ],
+  docTable:[
+    ["资料","Documents","产品型号、包装方式、外箱印制、彩盒印刷、产品外观、配件、产品细节，内部结构应与要求保持一致，外箱是否打印参考公司要求","","0","Pass","MI"],
+    ["出货国家","","美国/欧洲/其他","","0","Pass","MI"],
+    ["装箱数","","产品装箱数是否跟ERP一致","","0","Pass","MI"],
+    ["出货方式","","FOB/第三方仓/备售仓","","0","Pass","MI"],
+    ["认证","","产品是否有相关认证以及标准CE/FCC","","0","Pass","MI"],
+    ["物料","Materials","拆机核对内部关键物料","","0","Pass","MI"],
+    ["变更","Change","变更资料确认","","0","Pass","MI"],
+  ],
+  labelTable:[
+    ["标签","Label","外箱标签、产品标签，认证标签是否与要求一致","","0","Pass","MI"],
+    ["扫描","","含二维码/条形码是否能够正常扫描","","0","Pass","MI"],
+  ],
+  appTable:[
+    ["划痕/碰伤","Scratch / Dent","无划痕、无碰伤","","0","Pass","MI"],
+    ["污渍/水痕","Stain / Water mark","无污渍、无水痕","","0","Pass","MI"],
+    ["色差","Color difference","与封样一致","","0","Pass","MI"],
+    ["logo/丝印","Logo / Silk print","清晰、位置正确","Clear and correctly positioned","0","Pass","MI"],
+  ],
+};
+function buildFixed(){
+  for(const [tid,rows] of Object.entries(FIXED)){
+    const tb=$(tid).querySelector('tbody'); tb.innerHTML='';
+    rows.forEach((r,i)=>{
+      const tr=document.createElement('tr'); tr.className='fx-row'; tr.dataset.item=r[0];
+      const hasDef = r.length >= 6; // 新格式含不良数/等级
+      tr.innerHTML=`<td class="no-col center">${i+1}</td>
+        <td><input class="fx-item-cn" value="${esc(r[0])}" placeholder="检验项(中)"><input class="fx-item-en" value="${esc(r[1])}" placeholder="English / 待翻译" readonly></td>
+        <td><textarea class="fx-std-cn" placeholder="标准要求(中)">${r[2]}</textarea><input class="fx-std-en" placeholder="Requirement (EN)"></td>
+        <td><textarea class="fx-obs-cn" placeholder="实测结果(中)"></textarea><input class="fx-obs-en" placeholder="Actual Result (EN)"></td>
+        ${hasDef ? `<td class="center"><input class="fx-def num-r" type="number" min="0" value="${r[4]}" style="width:54px;text-align:center;"></td>
+        <td class="center"><select class="fx-res res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o===r[5]?'selected':''}>${o}</option>`).join('')}</select></td>
+        <td class="center"><select class="fx-sev sev">${['CR','MA','MI','N/A'].map(o=>`<option ${o===r[6]?'selected':''}>${o}</option>`).join('')}</select></td>` : `
+        <td class="center"><select class="fx-res res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o==='Pass'?'selected':''}>${o}</option>`).join('')}</select></td>`}
+        <td class="no-print center"><button class="row-del" onclick="delFixedRow(this,'${tid}')">×</button></td>`;
+      tb.appendChild(tr);
+      autoTranslate(tr.querySelector('.fx-item-cn'),tr.querySelector('.fx-item-en'),TERM_EN);
+      autoTranslate(tr.querySelector('.fx-std-cn'),tr.querySelector('.fx-std-en'),REQ_EN);
+      autoTranslate(tr.querySelector('.fx-obs-cn'),tr.querySelector('.fx-obs-en'),REQ_EN);
+    });
+  }
+}
+
+/* ===================== SKU ===================== */
+function addSku(sku,orderNo,orderQty,packed,unpacked,inspected,uninspected){
+  const tb=$('skuBody'); const tr=document.createElement('tr');
+  tr.innerHTML=`<td class="center"></td>
+    <td><input class="sku-m" placeholder="型号 / SKU" value="${sku||''}"></td>
+    <td><input class="sku-o" placeholder="订单号 / Order No." value="${orderNo||''}"></td>
+    <td><input class="sku-oq num-r" type="number" min="0" value="${orderQty||''}" placeholder="0"></td>
+    <td><input class="sku-pk num-r" type="number" min="0" value="${packed||''}" placeholder="0"></td>
+    <td><input class="sku-up num-r" type="number" min="0" value="${unpacked||''}" placeholder="0"></td>
+    <td><input class="sku-q num-r" type="number" min="0" value="${inspected||''}" placeholder="0"></td>
+    <td><input class="sku-uq num-r" type="number" min="0" value="${uninspected||''}" placeholder="0"></td>
+    <td class="no-print"><button class="row-del" onclick="this.closest('tr').remove();renumber('skuBody')">×</button></td>`;
+  tb.appendChild(tr);
+  bindNumSanitize(tr.querySelector('.sku-q'));
+  renumber('skuBody');
+}
+
+/* ===================== Dynamic rows ===================== */
+function addDyn(bodyId, kind, data){
+  data=data||{};
+  const tpl=$('dynRowTpl').content.firstElementChild.cloneNode(true);
+  const izh=tpl.querySelector('.izh'), ien=tpl.querySelector('.ien');
+  const sc=tpl.querySelector('.spec-cn'), se=tpl.querySelector('.spec-en');
+  const mc=tpl.querySelector('.meas-cn'), me=tpl.querySelector('.meas-en');
+  const qty=tpl.querySelector('.dyn-qty'), res=tpl.querySelector('.res'), sev=tpl.querySelector('.sev');
+  izh.value=data.item||''; ien.value=data.itemEn||'';
+  sc.value=data.std||''; se.value=data.stdEn||''; if(data.stdEn)se.classList.remove('pending');
+  mc.value=data.act||''; me.value=data.actEn||''; if(data.actEn)me.classList.remove('pending');
+  qty.value=(data.qty!=null?data.qty:0);
+  if(data.res)res.value=data.res;
+  // 功能检验默认 MA，安规检测默认 CR；传入数据则优先使用
+  const _defaultSev = (bodyId==='funcBody') ? 'MA' : 'CR';
+  sev.value = (data.sev || _defaultSev);
+  autoTranslate(izh,ien,TERM_EN);
+  autoTranslate(sc,se,REQ_EN);
+  autoTranslate(mc,me,REQ_EN);
+  $(bodyId).appendChild(tpl);
+  renumber(bodyId);
+}
+function copyPrev(bodyId){
+  const rows=$(bodyId).querySelectorAll('.dyn-row');
+  if(rows.length===0) return;
+  const last=rows[rows.length-1];
+  const g=sel=>last.querySelector(sel).value;
+  addDyn(bodyId, bodyId==='funcBody'?'func':'safe', {
+    item:g('.izh'), std:g('.spec-cn'), stdEn:g('.spec-en'),
+    act:g('.meas-cn'), actEn:g('.meas-en'), res:g('.res'), sev:g('.sev')
+  });
+}
+function renumber(bodyId){
+  const tb=$(bodyId); if(!tb) return;
+  // 只处理 tbody 中的行，避免把 thead 表头也计入编号
+  tb.querySelectorAll('tbody tr').forEach((tr,i)=>{ const c=tr.querySelector('.no-col'); if(c) c.textContent=i+1; });
+  if(bodyId==='skuBody'){ $('skuBody').querySelectorAll('tr').forEach((tr,i)=>{ const c=tr.querySelector('td.center'); if(c) c.textContent=i+1; }); }
+}
+
+/* ===================== Defects ===================== */
+let defectCounter=1;
+function allItemNames(){
+  const names=[];
+  document.querySelectorAll('.fx-row').forEach(r=>{ if(r.dataset.item) names.push(r.dataset.item); });
+  document.querySelectorAll('.dyn-row .izh').forEach(i=>{ if(i.value.trim()) names.push(i.value.trim()); });
+  return Array.from(new Set(names));
+}
+function buildLinkOptions(sel){
+  const cur=sel.value;
+  const opts=['<option value="">— 无关联 —</option>'].concat(allItemNames().map(n=>`<option ${n===cur?'selected':''}>${n}</option>`));
+  sel.innerHTML=opts.join('');
+}
+function addDefectEntry(d){
+  d=d||{};
+  const list=$('defectList');
+  const div=document.createElement('div'); div.className='defect-entry';
+  div.innerHTML=`<span class="de-no">${defectCounter}</span>
+    <div class="de-body">
+      <div class="de-head">
+        <select class="de-sev">${['CR','MA','MI','N/A'].map(s=>`<option ${s===(d.sev||'MI')?'selected':''}>${s}</option>`).join('')}</select>
+        <select class="de-type">${['外观 Appearance','功能 Function','安全 Safety','包装 Packaging','标签 Label'].map(s=>`<option ${s===(d.type||'外观 Appearance')?'selected':''}>${s}</option>`).join('')}</select>
+        <select class="de-link"><option value="">— 无关联 —</option></select>
+        <button class="de-rm no-print" onclick="this.closest('.defect-entry').remove();renumberDefects();refreshAll()">×</button>
+      </div>
+      <textarea class="de-desc" placeholder="缺陷描述(中) / Defect description">${d.desc||''}</textarea>
+      <div class="de-locrow"><input class="de-loc" placeholder="位置 / Location（可选 · Optional）"></div>
+      <div class="de-photos" data-id="${defectCounter}">
+        <button class="de-ph-up no-print" type="button">＋ 添加缺陷图片</button>
+      </div>
+    </div>`;
+  list.appendChild(div);
+  const ph = div.querySelector('.de-photos');
+  const upBtn = ph.querySelector('.de-ph-up');
+  upBtn.addEventListener('click', ()=>{
+    const inp=document.createElement('input'); inp.type='file'; inp.multiple=true; inp.accept='image/*';
+    inp.onchange=()=>{
+      const idx = Array.from(document.querySelectorAll('.defect-entry')).indexOf(div)+1;
+      handleFiles(inp.files, ph, true, idx);
+    };
+    inp.click();
+  });
+  if(d && d.photos){ d.photos.forEach(p=>{
+    const pid = p.photo_id!=null ? p.photo_id : (p.src && p.src.startsWith('data:') ? p.src : undefined);
+    addImgCard(ph, {photo_id: pid, cap: p.cap||'', src: p.src});
+  }); }
+  const link=div.querySelector('.de-link');
+  buildLinkOptions(link);
+  if(d.link) link.value=d.link;
+  if(d.loc) div.querySelector('.de-loc').value=d.loc;
+  link.addEventListener('change',()=>{ applyDefectLinks(); refreshAll(); });
+  div.querySelector('.de-sev').addEventListener('change',refreshAll);
+  defectCounter++;
+  renumberDefects();
+  applyDefectLinks();
+  refreshAll();
+}
+function renumberDefects(){
+  document.querySelectorAll('.defect-entry').forEach((d,i)=>{ const n=d.querySelector('.de-no'); if(n) n.textContent=i+1; });
+}
+function applyDefectLinks(){
+  const resSel = r => r.querySelector('.fx-res') || r.querySelector('.res');
+  document.querySelectorAll('.fx-row, .dyn-row').forEach(r=>{ const s=resSel(r); if(s&&s.dataset.locked==='1'){ s.dataset.locked=''; } });
+  document.querySelectorAll('.defect-entry').forEach(d=>{
+    const link=d.querySelector('.de-link').value;
+    if(!link) return;
+    document.querySelectorAll('.fx-row').forEach(r=>{ if(r.dataset.item===link){ const s=resSel(r); if(s){ s.value='Fail'; s.dataset.locked='1'; } } });
+    document.querySelectorAll('.dyn-row').forEach(r=>{ if(r.querySelector('.izh').value.trim()===link){ const s=resSel(r); if(s){ s.value='Fail'; s.dataset.locked='1'; } } });
+  });
+}
+
+/* ===================== Galleries ===================== */
+/* 第 8 项：9 类现场照片（与《在线报告完整蓝图 V1》一致）。
+   id 即后端 report_photos.category，手机拍照时按此归类即可 100% 自动入框。 */
+const GAL = [
+  {id:'placement',  name:'分产品摆放', en:'Placement'},
+  {id:'docs',       name:'产品资料',   en:'Product Docs'},
+  {id:'dimension',  name:'尺寸测量',   en:'Dimension'},
+  {id:'weight',     name:'称重',       en:'Weighing'},
+  {id:'label',      name:'标签&条码',  en:'Label & Barcode'},
+  {id:'function',   name:'功能测试',   en:'Function Test'},
+  {id:'safety',     name:'安规检测',   en:'Safety Test'},
+  {id:'drop',       name:'跌落测试',   en:'Drop Test'},
+  {id:'other',      name:'其他检测',   en:'Other'},
+];
+/* 旧 6 类 → 新 9 类 兼容映射（老报告加载时归位，不丢图） */
+const GAL_LEGACY_MAP = {
+  overview:'placement', packaging:'placement', label:'label',
+  product:'placement', defect:'other', production:'function'
+};
+const GAL_IDS = GAL.map(g=>g.id);
+function buildGalleries(){
+  const wrap=$('galleries'); wrap.innerHTML='';
+  wrap.insertAdjacentHTML('afterbegin',
+    '<div class="mob-up-bar no-print"><span class="mub-t">📱 手机拍照自动入框</span>'+
+    '<span class="mub-btns"><button type="button" id="mobUpQR">📱 二维码</button>'+
+    '<button type="button" id="mobUpOpen">获取链接 / 打开</button>'+
+    '<button type="button" id="mobUpSync">↻ 同步</button>'+
+    '<button type="button" id="mobUpConsist">🔍 一致性</button></span></div>'+
+    '<div class="mob-qr no-print" id="mobQrBox" style="display:none"><div id="mobQr"></div>'+
+    '<div class="mob-qr-tip" id="mobQrModeTip">用手机钉钉/微信扫一扫，直达本报告拍照页（自动归入对应图框）</div></div>');
+  // 拍照页URL（含当前产品模式：new=新品进报告+NAS，old=旧品仅NAS归档）
+  function captureUrl(){
+    const cfg=photoCfg(); const rid=reportId(); const rk=reportKey();
+    if(!cfg || !rk || rk==='unknown') return null;
+    const mode = ($('f_productMode') && $('f_productMode').value) || 'new';
+    const base = rid
+      ? (photoBase()+'/capture?rid='+encodeURIComponent(rid))
+      : (photoBase()+'/capture?key='+encodeURIComponent(rk));
+    return base + '&mode=' + encodeURIComponent(mode);
+  }
+  // 刷新模式提示文案
+  function refreshModeTip(){
+    const tip=wrap.querySelector('#mobQrModeTip'); if(!tip) return;
+    const mode = ($('f_productMode') && $('f_productMode').value) || 'new';
+    tip.innerHTML = mode==='old'
+      ? '📦 <b>旧品模式</b>：扫码后照片仅实时归档 NAS，不进报告（缺陷照片除外）'
+      : '✨ <b>新品模式</b>：扫码后照片进报告图框 + 实时归档 NAS';
+  }
+  const openBtn=wrap.querySelector('#mobUpOpen');
+  if(openBtn) openBtn.addEventListener('click', ()=>{
+    const url=captureUrl();
+    if(!url){ alert('当前报告尚未初始化手机拍照通道'); return; }
+    window.open(url, '_blank');
+  });
+  const qrBtn=wrap.querySelector('#mobUpQR');
+  if(qrBtn) qrBtn.addEventListener('click', ()=>{
+    const cfg=photoCfg(); const rk=reportKey();
+    if(!cfg || !rk || rk==='unknown'){ alert('当前报告尚未初始化手机拍照通道'); return; }
+    const box=wrap.querySelector('#mobQrBox');
+    const url=captureUrl();
+    refreshModeTip();
+    box.style.display = (box.style.display==='none') ? 'block' : 'none';
+    if(box.style.display==='block' && url){
+      const renderQr=()=>{ const c=wrap.querySelector('#mobQr'); if(!c) return; c.innerHTML=''; if(typeof QRCode!=='undefined'){ new QRCode(c,{text:url,width:168,height:168}); } };
+      if(typeof QRCode==='undefined'){
+        const s=document.createElement('script');
+        s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+        s.onload=renderQr; s.onerror=()=>{ box.insertAdjacentHTML('beforeend','<div class="mob-qr-tip" style="color:#dc2626">二维码库加载失败，请用「获取链接」复制网址</div>'); };
+        document.head.appendChild(s);
+      } else renderQr();
+    }
+  });
+  // 切换新品/旧品 → 若二维码已显示则自动重绘（无需刷新页面）
+  const pm=$('f_productMode');
+  if(pm){
+    pm.addEventListener('change', ()=>{
+      const box=wrap.querySelector('#mobQrBox');
+      if(box && box.style.display!=='none'){
+        const url=captureUrl();
+        refreshModeTip();
+        if(url){
+          const c=wrap.querySelector('#mobQr'); if(c){ c.innerHTML=''; if(typeof QRCode!=='undefined'){ new QRCode(c,{text:url,width:168,height:168}); } }
+        }
+      }
+    });
+  }
+  const syncBtn=wrap.querySelector('#mobUpSync');
+  if(syncBtn) syncBtn.addEventListener('click', ()=>{ mergeServerPhotos(); });
+  const consBtn=wrap.querySelector('#mobUpConsist');
+  if(consBtn) consBtn.addEventListener('click', async ()=>{
+    const cfg=photoCfg(); const rk=reportKey();
+    if(!cfg || rk==='unknown'){ alert('请先保存报告'); return; }
+    consBtn.textContent='校验中…'; consBtn.disabled=true;
+    try{
+      const resp=await fetch(photoBase()+'/api/photo/consistency?report_key='+encodeURIComponent(rk)+'&token='+encodeURIComponent(photoToken()));
+      const j=await resp.json();
+      const box=document.getElementById('consErr'); const list=document.getElementById('consErrList');
+      list.innerHTML='';
+      if(j.ok && j.consistent){ list.innerHTML='<li style="color:#16a34a">✅ 全部 '+j.total+' 张照片均已同步至 NAS，PDF 与 NAS 一致。</li>'; }
+      else if(j.ok){ (j.issues||[]).forEach(it=>{ const li=document.createElement('li'); li.textContent='• '+it; list.appendChild(li); }); }
+      else { const li=document.createElement('li'); li.textContent='校验失败：'+(j.msg||'未知'); list.appendChild(li); }
+      box.classList.add('on');
+    }catch(e){ alert('校验出错：'+e.message); }
+    finally{ consBtn.textContent='🔍 一致性'; consBtn.disabled=false; }
+  });
+  GAL.forEach(g=>{
+    const p=document.createElement('div'); p.className='gpanel'; p.dataset.gid=g.id;
+    p.innerHTML=`<h4>${g.name} <span class="en">${g.en}</span><span class="cnt" data-cnt="${g.id}">0</span></h4>
+      <div class="grid3" id="img_${g.id}"></div>
+      <div class="dropzone no-print" data-dz="${g.id}">拖拽或点击上传 · 支持批量 / 自动压缩</div>`;
+    wrap.appendChild(p);
+    const grid=p.querySelector('.grid3'), dz=p.querySelector('.dropzone');
+    dz.addEventListener('click',()=>{ const inp=document.createElement('input'); inp.type='file'; inp.multiple=true; inp.accept='image/*';
+      inp.onchange=()=>handleFiles(inp.files, grid, false); inp.click(); });
+    ['dragover','dragenter'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('drag');}));
+    ['dragleave'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('drag');}));
+    dz.addEventListener('drop',function(e){
+      e.preventDefault(); e.stopPropagation(); dz.classList.remove('drag');
+      try {
+        const files=e.dataTransfer&&e.dataTransfer.files;
+        if(files&&files.length) handleFiles(files, grid, false);
+        else console.warn('drop: no files');
+      } catch(err){ console.warn('drag upload blocked in iframe, use click instead'); }
+    });
+  });
+}
+
+/* canvas compress */
+async function compressImage(file, maxW=1600, q=0.82){
+  return new Promise((resolve)=>{
+    const rd=new FileReader();
+    rd.onload=()=>{ const img=new Image(); img.onload=()=>{
+      let {width,height}=img;
+      if(width>maxW){ height=Math.round(height*maxW/width); width=maxW; }
+      const cv=document.createElement('canvas'); cv.width=width; cv.height=height;
+      cv.getContext('2d').drawImage(img,0,0,width,height);
+      const out=cv.toDataURL('image/jpeg',q);
+      resolve(out.split(',')[1]);
+    }; img.onerror=()=>resolve(null); img.src=rd.result; };
+    rd.onerror=()=>resolve(null); rd.readAsDataURL(file);
+  });
+}
+/* ── 照片后端配置（由 Streamlit args.photo 注入）── */
+function photoCfg(){ return window.__PHOTO__ || null; }
+function _hostOf(url){
+  try{ return new URL(url).hostname || ''; }catch(_){ return ''; }
+}
+function _isLocalHost(host){
+  const h=(host||'').toLowerCase();
+  return !h || h==='localhost' || h==='127.0.0.1' || h==='0.0.0.0';
+}
+function _isPrivateHost(host){
+  const h=(host||'').toLowerCase();
+  if(_isLocalHost(h)) return true;
+  if(h.endsWith('.local') || h.endsWith('.lan')) return true;
+  if(/^10\./.test(h)) return true;
+  if(/^192\.168\./.test(h)) return true;
+  if(/^172\.(1[6-9]|2\d|3[0-1])\./.test(h)) return true;
+  return false;
+}
+function photoBase(){
+  const cfg = photoCfg();
+  const injected = (cfg && cfg.api_base) ? cfg.api_base.replace(/\/$/,'') : '';
+  const current = (location.origin || '').replace(/\/$/,'');
+  if(!injected) return current;
+  const injectedHost = _hostOf(injected);
+  const currentHost = _hostOf(current);
+  // 统一 8501 后，若当前页是公网/可访问域，而注入地址仍是内网/本地，则强制回到当前页 origin。
+  if(current && !_isLocalHost(currentHost) && !_isPrivateHost(currentHost) && _isPrivateHost(injectedHost)){
+    return current;
+  }
+  if(current && currentHost && injectedHost && currentHost !== injectedHost && _isPrivateHost(injectedHost)){
+    return current;
+  }
+  return injected || current;
+}
+function photoToken(){ const c=photoCfg(); return (c && c.token) || ''; }
+function withPhotoToken(url){
+  const token = photoToken();
+  if(!token) return url;
+  return url + (url.indexOf('?') >= 0 ? '&' : '?') + 'token=' + encodeURIComponent(token);
+}
+function reportKey(){ const c=photoCfg(); return (c && c.report_key) || 'unknown'; }
+function reportId(){ const c=photoCfg(); return (c && c.report_id) || null; }
+function photoUser(){ const c=photoCfg(); return (c && c.created_by) || ''; }
+
+async function uploadPhoto(b64, category, defectIndex){
+  const comma = b64.indexOf(',');
+  const data = comma >= 0 ? b64.slice(comma + 1) : b64;   // compressImage 可能已剥 data: 前缀
+  const byteChars = atob(data);
+  const bytes = new Uint8Array(byteChars.length);
+  for(let i=0;i<byteChars.length;i++) bytes[i]=byteChars.charCodeAt(i);
+  const blob = new Blob([bytes], {type:'image/jpeg'});
+  const fd = new FormData();
+  fd.append('file', blob, 'photo.jpg');
+  fd.append('report_key', reportKey());
+  fd.append('category', category);
+  if(defectIndex!=null) fd.append('defect_index', String(defectIndex));
+  fd.append('seq', String(++window.__PHOTO_SEQ__));
+  fd.append('token', photoToken());
+  fd.append('created_by', photoUser());
+  try{
+    const url = photoBase()+'/api/photo/upload';
+    const resp = await fetch(url, {method:'POST', body:fd});
+    const j = await resp.json();
+    if(j.ok) return j.photo_id;
+    console.error('upload fail', j); setHint('上传失败：'+(j.msg||'未知错误')); return null;
+  }catch(e){ console.error('upload err', e); setHint('上传失败，请检查网络'); return null; }
+}
+async function deletePhoto(pid){
+  try{
+    const resp=await fetch(photoBase()+'/api/photo/'+pid+'?by='+encodeURIComponent(photoUser())+'&token='+encodeURIComponent(photoToken()), {method:'DELETE'});
+    let data={}; try{ data=await resp.json(); }catch(e){}
+    if(!resp.ok || !data.ok){ setHint('删除失败：'+(data.msg||'NAS 删除未确认')); return false; }
+    return true;
+  }catch(e){ console.error('delete err', e); }
+  setHint('删除失败，请检查 NAS 连接');
+  return false;
+}
+
+async function handleFiles(files, grid, isDefect, defectIndex){
+  const category = isDefect ? 'defect' : (grid.closest('.gpanel') ? grid.closest('.gpanel').dataset.gid : 'other');
+  let okCount=0, failCount=0;
+  for(const f of files){
+    const isImg = /image\//.test(f.type) || /\.(png|jpe?g|gif|bmp|webp)$/i.test(f.name||'');
+    if(!isImg) continue;
+    const b64=await compressImage(f); if(!b64){ failCount++; continue; }
+    setHint('正在上传 '+f.name+' …');
+    try {
+      const pid=await uploadPhoto(b64, category, defectIndex);
+      if(pid){ addImgCard(grid, {photo_id:pid, cap:''}); okCount++; }
+      else failCount++;
+    } catch(e){ console.error('照片上传处理失败', e); failCount++; }
+  }
+  updateGalCounts();
+  setHint(failCount? ('完成，'+okCount+' 张成功，'+failCount+' 张失败') : ('已上传 '+okCount+' 张'));
+}
+function addImgCard(grid, photo){
+  // photo: {photo_id, cap, src?}
+  const pid = (photo && photo.photo_id!=null) ? photo.photo_id : null;
+  const cap = (photo && photo.cap) || '';
+  let src;
+  if(photo && photo.src){ src = photo.src; }
+  else if(pid!=null && String(pid).match(/^\d+$/)){ src = photoBase()+'/api/photo/'+pid; }
+  else if(typeof pid==='string' && pid.startsWith('data:')){ src = pid; }
+  else { src = ''; }
+  const card=document.createElement('div'); card.className='img-card';
+  if(pid!=null) card.dataset.photoId=pid;
+  const idx=grid.querySelectorAll('.img-card').length+1;
+  card.innerHTML=`<div class="thumb"><span class="idx">${idx}</span><img src="${src}" alt=""></div>
+    <textarea class="cap" placeholder="图片说明（可写 中文 | English）">${cap}</textarea>
+    <div class="meta no-print"><button class="g-rm" type="button">×</button></div>`;
+  card.querySelector('.g-rm').addEventListener('click', async ()=>{
+    if(pid!=null && String(pid).match(/^\d+$/)){
+      const ok=await deletePhoto(parseInt(pid));
+      if(!ok) return;
+    }
+    card.remove(); updateGalCounts();
+  });
+  card.querySelector('.thumb').addEventListener('click',()=>openLightbox(src, cap));
+  grid.appendChild(card);
+}
+function updateGalCounts(){
+  GAL.forEach(g=>{ const c=document.querySelector(`[data-cnt="${g.id}"]`); const grid=$('img_'+g.id);
+    if(c&&grid) c.textContent=grid.children.length; });
+}
+
+function pruneMissingServerPhotos(serverPhotos){
+  const liveIds = new Set((serverPhotos || []).map(p => String(p.id)));
+  document.querySelectorAll('.img-card[data-photo-id]').forEach(card=>{
+    const pid = String(card.dataset.photoId || '');
+    if(!/^\d+$/.test(pid)) return;
+    if(!liveIds.has(pid)) card.remove();
+  });
+}
+
+/* 移动端回填：按 report_key + category 把手机照片并入对应图框（去重，不依赖报告 JSON） */
+async function mergeServerPhotos(){
+  if(window.__PHOTO_SYNCING__) return;
+  const cfg = photoCfg(); const rk = reportKey();
+  if(!cfg || !rk || rk==='unknown') return;
+  window.__PHOTO_SYNCING__ = true;
+  try {
+    const beforePhotoSig=currentPhotoSig();
+    // NAS 主动删除的照片：先做可用性确认，再将已确认缺失项从数据库软删除。
+    // NAS 暂时不可用时接口返回 transient，不执行任何清理。
+    try{
+      await fetch(withPhotoToken(photoBase()+'/api/photo/consistency?report_key='+encodeURIComponent(rk)+'&reconcile=1'));
+    }catch(e){ /* 一致性检查失败不阻断正常回填 */ }
+    const resp = await fetch(withPhotoToken(photoBase()+'/api/photo/list?report_key='+encodeURIComponent(rk)));
+    if(!resp.ok) return;
+    const j = await resp.json();
+    if(!j || !j.ok) return;
+    const photos = j.photos || [];
+    pruneMissingServerPhotos(photos);
+    photos.forEach(p=>{
+      // archive_only 的照片（旧品非缺陷）仅 NAS 存档，不回填到报告图框
+      if(parseInt(p.archive_only||0)===1 && p.category!=='defect') return;
+      const pid = p.id;
+      if(p.category==='defect'){
+        let target=null;
+        const entries=document.querySelectorAll('.defect-entry');
+        if(p.defect_index!=null && entries[p.defect_index-1]) target=entries[p.defect_index-1].querySelector('.de-photos');
+        if(!target){ const all=document.querySelectorAll('.defect-entry .de-photos'); target=all.length?all[all.length-1]:null; }
+        if(target && !target.querySelector('.img-card[data-photo-id="'+pid+'"]')){
+          addImgCard(target, {photo_id: pid, cap: p.caption||''});
+        }
+        return;
+      }
+      const gid=p.category;
+      if(!GAL_IDS.includes(gid)) return;
+      const grid=$('img_'+gid);
+      if(!grid) return;
+      if(grid.querySelector('.img-card[data-photo-id="'+pid+'"]')) return; // 去重
+      addImgCard(grid, {photo_id: pid, cap: p.caption||''});
+    });
+    updateGalCounts();
+    scheduleHeightSync();
+    // 实时持久化：照片集合变化时静默保存，保证“边拍边存”，异常/刷新后仍能恢复
+    try {
+      var _sig = currentPhotoSig();
+      if(_sig !== (window.__lastPhotoSig||'')){
+        window.__lastPhotoSig = _sig;
+        saveDraft(false);
+        // NAS 缺失导致图片从当前报告移除时，同步把 galleries 回写服务器。
+        // 使用签名防止 1.5 秒轮询重复触发 Streamlit 重跑。
+        if(_sig !== beforePhotoSig && window._qmsReportId && !window.__NAS_RECONCILE_SENT__){
+          window.__NAS_RECONCILE_SENT__ = _sig;
+          try{ Streamlit.setComponentValue({type:'save_draft', data:collect(), reason:'nas_reconcile'}); }
+          catch(e){ window.__NAS_RECONCILE_SENT__=''; }
+        }
+      }
+    } catch(e){ /* 持久化失败不影响照片显示 */ }
+  } catch(e){ /* 回填失败不影响编辑 */ }
+  finally { window.__PHOTO_SYNCING__ = false; }
+}
+
+/* ===================== Caption restoration from data_json ===================== */
+function restoreCaptionsFromGalleries(d){
+  /* 从已保存的 data_json.galleries 中恢复照片说明到 DOM textarea。
+     照片上传 API 不传 caption（report_photos.caption 始终为空），
+     用户输入的说明只存在于 data_json.galleries[].items[].cap 中。
+     驳回后重新打开编辑时必须从此处补回，否则说明全部丢失。 */
+  if(!d || !d.galleries) return;
+  const gals = d.galleries;
+  // 构建 photo_id → caption 的映射
+  const capMap = {};
+  for(const gid in gals){
+    (gals[gid]||[]).forEach(item => {
+      if(item && item.photo_id && item.cap) capMap[item.photo_id] = item.cap;
+    });
+  }
+  // 缺陷记录中的照片
+  if(d.defects) d.defects.forEach(def => {
+    if(def && def.photos) def.photos.forEach(p => {
+      if(p && p.photo_id && p.cap) capMap[p.photo_id] = p.cap;
+    });
+  });
+  if(!Object.keys(capMap).length) return;
+  // 匹配 DOM 中的照片卡片并回填 caption
+  let restored = 0;
+  document.querySelectorAll('.img-card[data-photo-id]').forEach(card => {
+    const pid = card.getAttribute('data-photo-id');
+    if(pid && capMap[pid]){
+      const ta = card.querySelector('.cap');
+      if(ta && !ta.value.trim()){  // 仅在当前为空时补回，避免覆盖用户新输入
+        ta.value = capMap[pid];
+        restored++;
+      }
+    }
+  });
+  if(restored > 0) console.log(`[restoreCaptions] 恢复了 ${restored} 张照片的说明`);
+}
+
+/* ===================== Gallery restoration from data_json ===================== */
+function currentPhotoSig(){
+  /* 当前 DOM 中所有照片 id 的签名，用于判断“照片集合是否变化”，避免自动保存触发无限重渲染。 */
+  var ids = [];
+  document.querySelectorAll('.img-card[data-photo-id]').forEach(function(c){ ids.push(c.dataset.photoId); });
+  ids.sort();
+  return ids.join(',');
+}
+function restoreGalleries(d){
+  /* 重新打开报告时，优先从已保存的 data_json.galleries 恢复图框（可靠、自包含）。
+     即使 report_photos 表 / NAS / 接口暂时不可用，也能恢复到异常前的照片布局与说明。
+     随后 mergeServerPhotos() 会按 photo_id 去重并从服务端补强最新文件 URL，二者不冲突。 */
+  if(!d) return;
+  // 普通图框
+  var gals = d.galleries || {};
+  GAL.forEach(function(g){
+    var items = gals[g.id] || [];
+    var grid = $('img_'+g.id);
+    if(!grid) return;
+    (items||[]).forEach(function(item){
+      if(!item) return;
+      var pid = item.photo_id;
+      if(pid==null) return;
+      if(grid.querySelector('.img-card[data-photo-id="'+pid+'"]')) return; // 去重
+      addImgCard(grid, {photo_id: pid, cap: item.cap||''});
+    });
+  });
+  // 缺陷照片：与 d.defects 顺序一一对应
+  if(d.defects && Array.isArray(d.defects)){
+    var entries = document.querySelectorAll('.defect-entry');
+    d.defects.forEach(function(def, i){
+      if(!def || !def.photos || !def.photos.length) return;
+      var target = entries[i] ? entries[i].querySelector('.de-photos') : null;
+      if(!target) return;
+      def.photos.forEach(function(item){
+        if(!item) return;
+        var pid = item.photo_id;
+        if(pid==null) return;
+        if(target.querySelector('.img-card[data-photo-id="'+pid+'"]')) return; // 去重
+        addImgCard(target, {photo_id: pid, cap: item.cap||''});
+      });
+    });
+  }
+}
+
+/* ===================== Lightbox ===================== */
+let lbList=[], lbPos=0;
+function openLightbox(src, cap){ lbList=collectAllImgs(); lbPos=lbList.findIndex(x=>x.src===src); if(lbPos<0)lbPos=0; showLb(); $('lightbox').classList.add('on'); }
+function showLb(){ if(!lbList.length)return; const x=lbList[lbPos]; $('lbImg').src=x.src; $('lbCap').textContent=x.cap||''; }
+function lbStep(d){ if(!lbList.length)return; lbPos=(lbPos+d+lbList.length)%lbList.length; showLb(); }
+function closeLightbox(){ $('lightbox').classList.remove('on'); }
+function collectAllImgs(){ const out=[]; document.querySelectorAll('.img-card img').forEach(im=>{ out.push({src:im.src, cap:im.closest('.img-card').querySelector('.cap').value}); }); return out; }
+document.addEventListener('keydown',e=>{ if($('lightbox').classList.contains('on')){ if(e.key==='Escape')closeLightbox(); if(e.key==='ArrowLeft')lbStep(-1); if(e.key==='ArrowRight')lbStep(1);} });
+
+/* ===================== Verdict ===================== */
+function updateVerdictBox(){
+  const v=$('f_verdict').value;
+  const box=$('verdictBox'); const cn=$('verdictCn');
+  box.classList.toggle('ng', v==='FAIL');
+  cn.textContent = v==='PASS'?'PASS 通过': v==='FAIL'?'FAIL 不合格':'PENDING 待定';
+}
+
+/* ===================== Consistency / live computation ===================== */
+function countDefects(){
+  const c={CR:0,MA:0,MI:0,'N/A':0};
+  // 固定检验表：不良数按等级累加
+  document.querySelectorAll('.fx-row').forEach(r=>{
+    const sev=r.querySelector('.fx-sev'); if(!sev) return;
+    const n=parseInt(r.querySelector('.fx-def')?.value||0)||0;
+    if(c[sev.value]!=null) c[sev.value]+=n;
+  });
+  // 动态检验表（功能/安规/可靠性）：不良数(qty)按等级累加
+  document.querySelectorAll('.dyn-row').forEach(r=>{
+    const sev=r.querySelector('.sev'); if(!sev) return;
+    const n=parseInt(r.querySelector('.dyn-qty')?.value||0)||0;
+    if(c[sev.value]!=null) c[sev.value]+=n;
+  });
+  // 缺陷记录（叙述性）：只统计填写了描述的真实缺陷条目（下拉框有默认值，不能作为判断依据）
+  document.querySelectorAll('.defect-entry').forEach(d=>{
+    const s=d.querySelector('.de-sev').value;
+    const hasContent=(d.querySelector('.de-desc')?.value||'').trim();
+    if(c[s]!=null&&hasContent) c[s]++;
+  });
+  return c;
+}
+function updateSampling(){
+  const c=countDefects();
+  ['CR','MA','MI','N/A'].forEach(sev=>{
+    const lc=sev.toLowerCase();
+    const actEl=$('s_act_'+lc), verdictEl=$('s_v_'+lc);
+    // 当前 AQL 表只展示 CR/MA/MI；N/A 没有对应行时跳过，不能阻断整份报告初始化。
+    if(!actEl || !verdictEl) return;
+    actEl.textContent=c[sev]||0;
+    const ac=$('s_ac_'+lc).value.trim();
+    let v='Pass';
+    if(c[sev]>0){ v = (ac!=='' && c[sev]<=parseInt(ac)) ? 'Pass':'Fail'; }
+    verdictEl.innerHTML=badgeHTML(v,'result');
+  });
+}
+function refreshDefectSummary(){
+  const c=countDefects();
+  const parts=[['CR',c.CR],['MA',c.MA],['MI',c.MI]];
+  $('defectSummary').innerHTML='缺陷统计 Defect Counts：'+parts.map(([s,n])=>`<span class="badge ${badgeClass(s,'sev')}">${s} ${n}</span>`).join(' ');
+  $('defectStats').innerHTML=parts.map(([s,n])=>`<span class="ds-item"><span class="badge ${badgeClass(s,'sev')}">${s}</span> ${n} 项 / ${n} pc</span>`).join('');
+}
+function refreshVerdict(){
+  const c=countDefects();
+  const hasCoreInfo=['f_supplier','f_date','f_product'].every(id=>($(id)?.value||'').trim());
+  let v=hasCoreInfo?'PASS':'PENDING';
+  if(!hasCoreInfo){
+    if(!_verdictManual){ $('f_verdict').value=v; }
+    updateVerdictBox();
+    return;
+  }
+  if(c.CR>0) v='FAIL';
+  else { const acMa=$('s_ac_ma').value.trim(), acMi=$('s_ac_mi').value.trim();
+    if(c.MA>0 && (acMa===''||c.MA>parseInt(acMa))) v='FAIL';
+    else if(c.MI>0 && (acMi===''||c.MI>parseInt(acMi))) v='FAIL';
+  }
+  // 仅在用户未手动修改时自动填充；用户手动选过则保留其选择
+  if(!_verdictManual){ $('f_verdict').value=v; }
+  updateVerdictBox();
+}
+function refreshAll(){ updateSampling(); refreshDefectSummary(); refreshVerdict(); }
+
+/* ===================== Consistency validation (pre-export) ===================== */
+function getConsistencyErrors(){
+  const errs=[];
+  const defects=Array.from(document.querySelectorAll('.defect-entry')).map(d=>({
+    sev:d.querySelector('.de-sev').value, link:d.querySelector('.de-link').value, desc:d.querySelector('.de-desc').value.trim()
+  }));
+  const c=countDefects();
+  defects.forEach((d,i)=>{
+    if(d.link){
+      let rowRes='';
+      document.querySelectorAll('.fx-row').forEach(r=>{ if(r.dataset.item===d.link) rowRes=(r.querySelector('.fx-res')||r.querySelector('.res'))?.value; });
+      document.querySelectorAll('.dyn-row').forEach(r=>{ if(r.querySelector('.izh').value.trim()===d.link) rowRes=r.querySelector('.res').value; });
+      if(rowRes==='Pass') errs.push(`缺陷 #${i+1} 关联「${d.link}」，但该检验项仍判定为 Pass，必须改为 Fail。`);
+    }
+    if(!d.desc) errs.push(`缺陷 #${i+1} 缺少缺陷描述。`);
+  });
+  ['CR','MA','MI','N/A'].forEach(sev=>{
+    const lc=sev.toLowerCase();
+    const actEl=$('s_act_'+lc), verdictEl=$('s_v_'+lc);
+    if(!actEl || !verdictEl) return;
+    const actCell=parseInt(actEl.textContent)||0;
+    if(actCell!==c[sev]) errs.push(`AQL(${sev}) 实际不良数显示 ${actCell}，与缺陷记录统计 ${c[sev]} 不一致。`);
+    const vCellTxt=verdictEl.textContent.trim();
+    const ac=$('s_ac_'+lc).value.trim();
+    const exp = c[sev]>0 ? (ac!=='' && c[sev]<=parseInt(ac)?'Pass':'Fail') : 'Pass';
+    if(vCellTxt && exp!==vCellTxt) errs.push(`AQL(${sev}) 判定应为 ${exp}，但显示为 ${vCellTxt}。`);
+  });
+  const hasCoreInfo=['f_supplier','f_date','f_product'].every(id=>($(id)?.value||'').trim());
+  let expV=hasCoreInfo?'PASS':'PENDING';
+  if(!hasCoreInfo){
+    if($('f_verdict').value!==expV) errs.push('请先填写供应商、验货日期和产品名称，再提交报告或导出纸质 PDF。');
+    return errs;
+  }
+  if(c.CR>0) expV='FAIL';
+  else { const acMa=$('s_ac_ma').value.trim(), acMi=$('s_ac_mi').value.trim();
+    if(c.MA>0 && (acMa===''||c.MA>parseInt(acMa))) expV='FAIL';
+    else if(c.MI>0 && (acMi===''||c.MI>parseInt(acMi))) expV='FAIL';
+  }
+  if($('f_verdict').value!==expV) errs.push(`总体结论应为 ${expV}，但当前为 ${$('f_verdict').value}。`);
+  return errs;
+}
+
+/* ===================== Collect / Apply ===================== */
+/** 清理英文字段：移除所有翻译占位符（中英文），防止 PDF/提交时写入无效文本。 */
+function cleanEn(v){ return storedEnglish(v); }
+
+function collect(){
+  const gal={};
+  GAL.forEach(g=>{ const grid=$('img_'+g.id);
+    gal[g.id]=(grid?Array.from(grid.querySelectorAll('.img-card')).map(c=>({
+      photo_id: c.dataset.photoId ? c.dataset.photoId : undefined,
+      src: c.querySelector('img').src,
+      cap: c.querySelector('.cap').value
+    })):[]); });
+  const dyn=bodyId=>Array.from($(bodyId).querySelectorAll('.dyn-row')).map(r=>({
+    item:r.querySelector('.izh').value, itemEn:cleanEn(r.querySelector('.ien').value),
+    std:r.querySelector('.spec-cn').value, stdEn:cleanEn(r.querySelector('.spec-en').value),
+    act:r.querySelector('.meas-cn').value, actEn:cleanEn(r.querySelector('.meas-en').value),
+    qty:r.querySelector('.dyn-qty').value, res:r.querySelector('.res').value, sev:r.querySelector('.sev').value
+  }));
+  const defects=Array.from(document.querySelectorAll('.defect-entry')).map(d=>({
+    sev:d.querySelector('.de-sev').value, type:d.querySelector('.de-type').value, link:d.querySelector('.de-link').value,
+    loc:(d.querySelector('.de-loc')?d.querySelector('.de-loc').value:''), desc:d.querySelector('.de-desc').value,
+    photos:Array.from(d.querySelectorAll('.de-photos .img-card')).map(c=>({
+      photo_id: c.dataset.photoId ? c.dataset.photoId : undefined,
+      src: c.querySelector('img').src,
+      cap: c.querySelector('.cap').value
+    }))
+  }));
+  const smp={};
+  ['cr','ma','mi'].forEach(lc=>{ smp['aql'+lc.toUpperCase()]=$('s_aql_'+lc).value; smp['ac'+lc.toUpperCase()]=$('s_ac_'+lc).value; smp['re'+lc.toUpperCase()]=$('s_re_'+lc).value; });
+  return {
+    repno:$('cover_repno').textContent,
+    basic:{supplier:$('f_supplier').value,date:$('f_date').value,product:$('f_product').value,
+      title:$('f_title').value, brand:$('f_brand').value,model:$('f_model').value,sku:$('f_sku').value,
+      inspector:$('f_inspector').value,po:$('f_po').value,type:$('f_type').value,service:$('f_service').value,
+      productMode:$('f_productMode').value,remark:$('f_remark').value},
+    skus:Array.from($('skuBody').querySelectorAll('tr')).map(r=>({sku:r.querySelector('.sku-m').value,orderNo:r.querySelector('.sku-o').value,orderQty:r.querySelector('.sku-oq').value,packed:r.querySelector('.sku-pk').value,unpacked:r.querySelector('.sku-up').value,qty:r.querySelector('.sku-q').value,uninspected:r.querySelector('.sku-uq').value})),
+    sampling:{level:$('s_level').value,lot:$('s_lot').value,sample:$('s_sample').value,std:$('s_std').value,...smp},
+    // 尺寸/重量虽是数值型表格，也必须进入同一份草稿 fixed 数据，
+    // 否则刷新后其它检验项还在，但这两张表会丢失。
+    fixed:Object.fromEntries(Object.keys(FIXED).concat(['dimFxTable','wtFxTable']).map(tid=>[tid,
+      tid==='dimFxTable' ? Array.from($(tid).querySelectorAll('.fx-row')).map(r=>({
+        type:(r.querySelector('.fx-item-cn')||{}).value||'', len:(r.querySelector('.dim-len')||{}).value||'',
+        wid:(r.querySelector('.dim-wid')||{}).value||'', hgt:(r.querySelector('.dim-hgt')||{}).value||'',
+        dia:(r.querySelector('.dim-dia')||{}).value||'', def:(r.querySelector('.fx-def')||{}).value||'0',
+        res:(r.querySelector('.fx-res')||{}).value||'Pass', sev:(r.querySelector('.fx-sev')||{}).value||'MI'
+      })) :
+      tid==='wtFxTable' ? Array.from($(tid).querySelectorAll('.fx-row')).map(r=>({
+        sku:(r.querySelector('.wt-sku')||r.querySelector('.fx-item-cn')||{}).value||'',
+        net:(r.querySelector('.wt-net')||{}).value||'', gross:(r.querySelector('.wt-gross')||{}).value||'',
+        pkg:(r.querySelector('.wt-pkg')||{}).value||'', def:(r.querySelector('.fx-def')||{}).value||'0',
+        res:(r.querySelector('.fx-res')||{}).value||'Pass', sev:(r.querySelector('.fx-sev')||{}).value||'MI'
+      })) :
+      Array.from($(tid).querySelectorAll('.fx-row')).map(r=>{
+      const itemInput=r.querySelector('.fx-item-cn');
+      const item = itemInput ? itemInput.value.trim() : (r.dataset.item||'');
+      const itemEnInput=r.querySelector('.fx-item-en');
+      const itemEn = itemEnInput ? itemEnInput.value : '';
+      const defEl=r.querySelector('.fx-def'); const resEl=r.querySelector('.fx-res'); const sevEl=r.querySelector('.fx-sev');
+      return {
+        item:item, itemEn:cleanEn(itemEn),
+        std:r.querySelector('.fx-std-cn').value, stdEn:cleanEn(r.querySelector('.fx-std-en').value),
+        obs:r.querySelector('.fx-obs-cn').value, obsEn:cleanEn(r.querySelector('.fx-obs-en').value),
+        def:(defEl?defEl.value:'0'),
+        res:(resEl?resEl.value:'Pass'),
+        sev:(sevEl?sevEl.value:'MI')
+      };
+    })])),
+    func:dyn('funcBody'), safe:dyn('safeBody'), rel:dyn('relBody'),
+    defects, galleries:gal,
+    conclusion:{verdict:$('f_verdict').value,conc:$('f_conc').value,sign1:$('f_sign1').value,sign2:$('f_sign2').value,sign3:$('f_sign3').value}
+  };
+}
+function applyData(d){
+  if(!d) return;
+  if(d.basic){ const b=d.basic; for(const k in b){ if($('f_'+k)) $('f_'+k).value=b[k]; } if($('f_title')&&!d.basic.title&&d.basic.product) $('f_title').value=''; }
+  // Restore every SKU column by its persisted field name. The old positional
+  // call dropped order number, packed/unpacked and inspection quantities.
+  if(d.skus){ $('skuBody').innerHTML=''; d.skus.forEach(s=>addSku(
+    s.sku, s.orderNo, s.orderQty, s.packed, s.unpacked, s.qty, s.uninspected
+  )); }
+  if(d.sampling){ for(const k in d.sampling){ const map={level:'s_level',lot:'s_lot',sample:'s_sample',std:'s_std',aqlCR:'s_aql_cr',aqlMA:'s_aql_ma',aqlMI:'s_aql_mi',acCR:'s_ac_cr',acMA:'s_ac_ma',acMI:'s_ac_mi',reCR:'s_re_cr',reMA:'s_re_ma',reMI:'s_re_mi'}; const id=map[k]; if(id&&$(id)) $(id).value=d.sampling[k]; } }
+  if(d.fixed){ for(const tid in d.fixed){ const tEl=$(tid); if(!tEl) continue; const tb=tEl.querySelector('tbody');
+    // Rebuild from persisted rows instead of overlaying them on template rows.
+    // This prevents "saved 2 rows + default 4 rows" after reopening a draft.
+    tb.innerHTML='';
+    d.fixed[tid].forEach((r,i)=>{
+      let tr;
+      if(tid==='dimFxTable'){ addDimRow(); tr = tb.querySelectorAll('.fx-row')[i]; }
+      else if(tid==='wtFxTable'){ addWtRow(); tr = tb.querySelectorAll('.fx-row')[i]; }
+      else { addFixedRow(tid); tr = tb.querySelectorAll('.fx-row')[i]; }
+      if (tr) {
+        // dim/wt 数值表格特殊处理
+        if(tid==='dimFxTable'){
+          const ci=tr.querySelector('.fx-item-cn'); if(ci)ci.value=(r.type||r.item||'');
+          const dl=tr.querySelector('.dim-len'); if(dl)dl.value=(r.len||'');
+          const dw=tr.querySelector('.dim-wid'); if(dw)dw.value=(r.wid||'');
+          const dh=tr.querySelector('.dim-hgt'); if(dh)dh.value=(r.hgt||'');
+          const dd=tr.querySelector('.dim-dia'); if(dd)dd.value=(r.dia||'');
+          const df=tr.querySelector('.fx-def'); if(df)df.value=(r.def!=null?r.def:'0');
+          const dr=tr.querySelector('.fx-res'); if(dr&&r.res)dr.value=r.res;
+          const ds=tr.querySelector('.fx-sev'); if(ds)ds.value=(r.sev||'MI');
+        } else if(tid==='wtFxTable'){
+          const ws=tr.querySelector('.wt-sku')||tr.querySelector('.fx-item-cn'); if(ws)ws.value=(r.sku||r.item||'');
+          const wn=tr.querySelector('.wt-net'); if(wn)wn.value=(r.net||'');
+          const wg=tr.querySelector('.wt-gross'); if(wg)wg.value=(r.gross||'');
+          const wp=tr.querySelector('.wt-pkg'); if(wp)wp.value=(r.pkg||'');
+          const wd=tr.querySelector('.fx-def'); if(wd)wd.value=(r.def!=null?r.def:'0');
+          const wr=tr.querySelector('.fx-res'); if(wr&&r.res)wr.value=r.res;
+          const ws2=tr.querySelector('.fx-sev'); if(ws2)ws2.value=(r.sev||'MI');
+        } else {
+          // 标准 fx-tbl（order/doc/label/app）
+          const itemInput=tr.querySelector('.fx-item-cn')||tr.querySelector('.add-item');
+          const itemEnInput=tr.querySelector('.fx-item-en')||tr.querySelector('.add-item-en');
+          if(itemInput && r.item!=null) itemInput.value=r.item;
+          // Keep the template translation when an old draft contains only a
+          // pending marker; never restore that marker over a valid label.
+          if(itemEnInput && r.itemEn!=null && r.itemEn.trim() && !hasCjk(r.itemEn) && !/pending|translating/i.test(r.itemEn)) itemEnInput.value=r.itemEn;
+          tr.querySelector('.fx-std-cn').value=r.std||''; tr.querySelector('.fx-std-en').value=r.stdEn||'';
+          tr.querySelector('.fx-obs-cn').value=r.obs||''; tr.querySelector('.fx-obs-en').value=r.obsEn||'';
+          if(r.res)tr.querySelector('.fx-res').value=r.res;
+          if(tr.querySelector('.fx-def')) tr.querySelector('.fx-def').value=(r.def!=null?r.def:'0');
+          if(tr.querySelector('.fx-sev')) tr.querySelector('.fx-sev').value=(r.sev||'MI');
+        }
+      }
+    }); renumber(tid); } }
+  if(d.func){ $('funcBody').innerHTML=''; d.func.forEach(r=>addDyn('funcBody','func',{item:r.item,itemEn:r.itemEn,std:r.std,stdEn:r.stdEn,act:r.act,actEn:r.actEn,qty:r.qty,res:r.res,sev:r.sev})); }
+  if(d.safe){ $('safeBody').innerHTML=''; d.safe.forEach(r=>addDyn('safeBody','safe',{item:r.item,itemEn:r.itemEn,std:r.std,stdEn:r.stdEn,act:r.act,actEn:r.actEn,qty:r.qty,res:r.res,sev:r.sev})); }
+  if(d.rel){ $('relBody').innerHTML=''; d.rel.forEach(r=>addDyn('relBody','rel',{item:r.item,itemEn:r.itemEn,std:r.std,stdEn:r.stdEn,act:r.act,actEn:r.actEn,qty:r.qty,res:r.res,sev:r.sev})); }
+  if(d.defects){
+    $('defectList').innerHTML=''; defectCounter=1;
+    // 兼容旧草稿：清理从未填写过内容的历史占位行，但保留真实缺陷记录并继续校验描述。
+    d.defects.filter(x=>x && ((x.desc||'').trim() || (x.link||'').trim() || (x.loc||'').trim() || (x.photos||[]).length))
+      .forEach(x=>addDefectEntry(x));
+    applyDefectLinks();
+  }
+  // ── 照片恢复：先从 data_json.galleries 即时恢复（自包含，不依赖接口/NAS），再由 mergeServerPhotos 去重补强 ──
+  if(d.conclusion){ $('f_verdict').value=d.conclusion.verdict||'PENDING'; $('f_conc').value=d.conclusion.conc||''; $('f_sign1').value=d.conclusion.sign1||''; $('f_sign2').value=d.conclusion.sign2||''; $('f_sign3').value=d.conclusion.sign3||''; }
+  applyDefectLinks();
+  refreshAll();
+  updateVerdictBox();
+  hydrateMissingTranslations();
+  restoreGalleries(d);                 // 优先从已保存草稿恢复（异常前状态）
+  restoreCaptionsFromGalleries(d);     // 补回照片说明
+  window.__lastPhotoSig = currentPhotoSig();  // 设定基线，避免首次自动保存触发重渲染循环
+  // 恢复阶段不再异步翻译或延迟改写报告，保证驳回/中断重开时保持原样。
+  mergeServerPhotos().then(function(){
+    // 照片集合若与基线不同（merge 补回了服务端照片），则静默持久化到 data_json.galleries
+    var sig = currentPhotoSig();
+    if(sig !== window.__lastPhotoSig){
+      window.__lastPhotoSig = sig;
+      saveDraft(false);  // 静默持久化，不弹 alert
+      console.log('[PhotoPersist] 已持久化 '+sig.split(',').length+' 张照片到本地草稿');
+    }
+  }).catch(function(e){ console.warn('[PhotoPersist] mergeServerPhotos 异常:', e); });
+  if(window.__PHOTO_SYNC_TIMER__) clearInterval(window.__PHOTO_SYNC_TIMER__);
+  window.__PHOTO_SYNC_TIMER__ = setInterval(()=>{
+    if(document.visibilityState === 'visible') mergeServerPhotos();
+  }, 1500);
+}
+
+/* ===================== Draft ===================== */
+const DKEY='insp_v9';
+let _saveT;
+function draftStorageKey(){
+  const key=window._qmsReportId || window._qmsReportNo || 'new';
+  return `${DKEY}:${key}`;
+}
+function readDraft(){
+  try{
+    const s=localStorage.getItem(draftStorageKey());
+    if(!s) return null;
+    const parsed=JSON.parse(s);
+    return parsed && parsed.data ? parsed.data : parsed; // legacy raw-data compatibility
+  }catch(e){ return null; }
+}
+function saveDraft(manual){
+  try{
+    localStorage.setItem(draftStorageKey(), JSON.stringify({version:2,savedAt:Date.now(),data:collect()}));
+    if(manual) alert('草稿已保存');
+  }catch(e){}
+}
+function loadDraft(){ const data=readDraft(); if(data){ applyData(data); return true; } return false; }
+document.addEventListener('input',()=>{ clearTimeout(_saveT); _saveT=setTimeout(()=>saveDraft(false),800); });
+// 实时联动：检验项不良数/等级变化时，立即刷新 AQL 实际不良数、结论缺陷统计与判定
+// （覆盖 Section 4 固定表 .fx-def/.fx-sev、Section 5/6 动态表 .dyn-qty/.sev、叙述性缺陷记录）
+document.addEventListener('input', refreshAll);
+document.addEventListener('change', refreshAll);
+function resetForm(){ if(!confirm('确认清空所有内容？')) return; localStorage.removeItem(draftStorageKey()); location.reload(); }
+
+// Common checks are preloaded for a new report; actual observations stay empty.
+// These rows remain editable and can still be added or removed by the inspector.
+const DYN_PRESETS = {
+  safe: [
+    {item:'接地连续性', itemEn:'Ground continuity', std:'<0.1Ω/25A', stdEn:'<0.1Ω/25A'},
+    {item:'耐压测试', itemEn:'Hi-Pot Test', std:'3000V/10s, leakage <5mA (line to ground)', stdEn:'3000V/10s, leakage <5mA (line to ground)'},
+    {item:'绝缘电阻', itemEn:'Insulation Resistance', std:'>100MΩ (500V DC)', stdEn:'>100MΩ (500V DC)'},
+    {item:'ESD Protection — Contact/Air', itemEn:'ESD Protection – Contact/Air', std:'Contact: No malfunction at ±4kV contact discharge\nAir: No malfunction at ±8kV air discharge', stdEn:'Contact: No malfunction at ±4kV contact discharge\nAir: No malfunction at ±8kV air discharge'},
+  ],
+  rel: [
+    {item:'跌落', itemEn:'Drop', std:'ISTA 6A跌落测试（符合亚马逊要求）', stdEn:'ISTA 6A drop test (Amazon compliant)'},
+    {item:'防水测试', itemEn:'Waterproof Test', std:'是否符合产品设计要求，如IPX3/IPX4/IPX5/IPX6/IPX7', stdEn:'Compliant with product design requirements, e.g. IPX3/IPX4/IPX5/IPX6/IPX7'},
+  ],
+};
+
+/* ===================== empty template data ===================== */
+/* ===================== Blank template data (structure, empty values) ===================== */
+function blankData(){
+  const fixed={};
+  Object.keys(FIXED).forEach(tid=>{
+    fixed[tid]=FIXED[tid].map(d=>({item:d[0],itemEn:'',std:d[2],stdEn:REQ_EN[d[2]]||'',obs:'',obsEn:'',res:'Pass'}));
+  });
+  return {
+    repno:'QC-____-____', __blank:true,
+    basic:{supplier:'',date:'',product:'',title:'',brand:'',model:'',sku:'',po:'',type:'出货前 Final',service:'抽检 AQL',remark:''},
+    skus:[{sku:'',desc:'',qty:''}],
+    sampling:{level:'General Inspection Level II',lot:'',sample:'',std:'ANSI/ASQ Z1.4 (等同 GB/T 2828.1)',aqlCR:'0',aqlMA:'2.5',aqlMI:'4.0',acCR:'',acMA:'',acMI:'',reCR:'',reMA:'',reMI:''},
+    fixed,
+    rel:(DYN_PRESETS.rel||[]).map(r=>({...r,act:'',actEn:'',qty:'0',res:'Pass',sev:'MI'})),
+    func:[{item:'',itemEn:'',std:'',stdEn:'',act:'',actEn:'',qty:'0',res:'Pass',sev:'MA'}],
+    safe:DYN_PRESETS.safe.map(r=>({...r,act:'',actEn:'',qty:'0',res:'Pass',sev:'CR'})),
+    defects:[],
+    galleries:Object.fromEntries(GAL.map(g=>[g.id,[]])),
+    conclusion:{verdict:'PENDING',conc:'',sign1:'',sign2:'',sign3:''}
+  };
+}
+
+/* ===================== Build independent read-only Report ===================== */
+let _reportBuilt=false;
+function capSplit(cap){
+  cap=(cap||'').trim();
+  if(!cap) return {cn:'', en:''};
+  const i=cap.indexOf('|');
+  if(i>=0){ return {cn:cap.slice(0,i).trim(), en:cap.slice(i+1).trim()}; }
+  // try dictionary on full caption
+  if(CAP_EN[cap]) return {cn:cap, en:CAP_EN[cap]};
+  return {cn:cap, en:''};
+}
+function rHead(repno){
+  return `<div class="r-head">
+    <img class="r-logo-img" src="company_logo.png" alt="SainStore">
+    <div class="r-title">Product Inspection Report</div>
+    <div class="r-repno">Report No. <b>${esc(repno||'—')}</b></div>
+  </div>`;
+}
+function rFoot(){
+  return `<div class="r-foot">
+    <span><b>Template</b> ${TEMPLATE_VERSION}</span>
+    <span><b>Revision</b> ${REPORT_REVISION}</span>
+    <span><b>Generated</b> ${nowStr()}</span>
+    <span class="rf-conf">CONFIDENTIAL</span>
+  </div>`;
+}
+function secTitle(num, cn, en){
+  return `<div class="r-sec-h"><span class="num">${num}</span> ${cn} <span class="en">${en}</span></div>`;
+}
+function kv(k, en, v, full){
+  return `<div class="r-kv ${full?'full':''}"><span class="k">${k}<span class="en">${en}</span></span><span class="v">${esc(v||'—')}</span></div>`;
+}
+function fixedTbl(tid, rows, titleCn, titleEn, force){
+  const body=(force?rows:rows.filter(r=> (r.std&&r.std.trim()) || (r.obs&&r.obs.trim()) || (r.def&&String(r.def).trim()&&r.def!=='0') || (r.res&&r.res!=='Pass')))
+    .map((r,i)=>`<tr>
+      <td class="center">${i+1}</td>
+      <td><div class="r-it">${esc(r.itemCn||'')}<span class="en">${esc(r.itemEn||'')}</span></div></td>
+      <td><div class="r-cn">${esc(r.std||'')}</div><div class="r-en">${esc(r.stdEn||'')}</div></td>
+      <td><div class="r-cn">${esc(r.obs||'')}</div><div class="r-en">${esc(r.obsEn||'')}</div></td>
+      <td class="num-r center">${esc(r.def!=null?r.def:'0')}</td>
+      <td class="center">${badgeHTML(r.res||'Pass','result')}</td>
+      <td class="center">${badgeHTML(r.sev||'MI','sev')}</td>
+    </tr>`).join('');
+  if(!body) return '';
+  return `<table class="r-tbl"><thead><tr>
+    <th style="width:26px" class="center">#</th>
+    <th>检验项目 <span class="en">Item</span></th>
+    <th style="width:30%">标准要求 <span class="en">Requirement</span></th>
+    <th style="width:26%">实测 / 观察 <span class="en">Actual / Observation</span></th>
+    <th class="num-r center">不良数 <span class="en">Def</span></th>
+    <th style="width:58px" class="center">结果 <span class="en">Result</span></th>
+    <th class="center">等级 <span class="en">Sev</span></th>
+  </tr></thead><tbody>${body}</tbody></table>`;
+}
+function dynTbl(rows, force){
+  const body=(force?rows:rows.filter(r=> (r.item&&r.item.trim()) || (r.std&&r.std.trim()) || (r.act&&r.act.trim())))
+    .map((r,i)=>`<tr>
+      <td class="center">${i+1}</td>
+      <td><div class="r-it">${esc(r.item||'')}<span class="en">${esc(storedEnglish(r.itemEn))}</span></div></td>
+      <td><div class="r-cn">${esc(r.std||'')}</div><div class="r-en">${esc(storedEnglish(r.stdEn))}</div></td>
+      <td><div class="r-cn">${esc(r.act||'')}</div><div class="r-en">${esc(storedEnglish(r.actEn))}</div></td>
+      <td class="center">${esc(r.qty||'0')}</td>
+      <td class="center">${badgeHTML(r.res||'Pass','result')}</td>
+      <td class="center">${badgeHTML(r.sev||'MI','sev')}</td>
+    </tr>`).join('');
+  if(!body) return '';
+  return `<table class="r-tbl"><thead><tr>
+    <th style="width:26px" class="center">#</th>
+    <th style="width:20%">测试项目 <span class="en">Item</span></th>
+    <th style="width:27%">标准要求 <span class="en">Requirement</span></th>
+    <th style="width:22%">实测结果 <span class="en">Actual Result</span></th>
+    <th class="center">不良数 <span class="en">Def</span></th>
+    <th style="width:58px" class="center">结果 <span class="en">Result</span></th>
+    <th class="center">等级 <span class="en">Sev</span></th>
+  </tr></thead><tbody>${body}</tbody></table>`;
+}
+function photoGrid(imgs){
+  const cards=imgs.filter(im=>im.src).map((im,i)=>{
+    const c=capSplit(im.cap);
+    const capHtml = c.cn ? `<div class="cap"><span class="cn">${esc(c.cn)}</span>${c.en?`<span class="en">${esc(c.en)}</span>`:''}</div>` : '';
+    return `<div class="r-img"><div class="it"><span class="ix">${i+1}</span><img src="${im.src}" alt=""></div>${capHtml}</div>`;
+  }).join('');
+  return cards;
+}
+function buildReport(data){
+  if(!data) data=collect();
+  const b=data.basic||{};
+  const repno=data.repno||'—';
+  const showEmpty=!!data.__blank;
+  const c=countDefectsFrom(data);
+  // header
+  let html=rHead(repno);
+  // 1. Basic
+  let s=`<div class="r-sec">${secTitle('1','基本信息','General Information')}`;
+  s+=`<div class="r-grid three">
+    ${kv('供应商','Supplier',b.supplier)}
+    ${kv('验货日期','Date',fmtDate(b.date))}
+    ${kv('产品名称','Product',b.product)}
+    ${kv('品牌','Brand',b.brand)}
+    ${kv('产品型号','Model',b.model)}
+    ${kv('SKU','',b.sku)}
+    ${kv('PO/合同号','PO / Contract',b.po)}
+    ${kv('验货类型','Type',b.type)}
+    ${kv('验货模式','Service',b.service)}
+  </div>`;
+  if(b.remark&&b.remark.trim()) s+=`<div class="r-remark">备注 / Remarks：${esc(b.remark)}</div>`;
+  s+=`</div>`;
+  if(showEmpty || (data.skus||[]).filter(x=>x.sku||x.orderNo||x.qty).length){
+    s+=`<div class="r-sec">${secTitle('2','产品型号','Model / SKU')}<table class="r-tbl"><thead><tr>
+      <th style="width:28px" class="center">#</th><th>型号 / SKU<span class="en">Model / SKU</span></th><th>订单号 <span class="en">Order No.</span></th><th class="num-r">订单数量 <span class="en">Order Qty</span></th><th class="num-r">已包装数 <span class="en">Packed</span></th><th class="num-r">未包装数 <span class="en">Unpacked</span></th><th class="num-r">已检验数量 <span class="en">Inspected Qty</span></th><th class="num-r">未检验数量 <span class="en">Uninspected</span></th></tr></thead><tbody>
+      ${(showEmpty?data.skus:(data.skus||[]).filter(x=>x.sku||x.orderNo||x.qty)).map((x,i)=>`<tr><td class="center">${i+1}</td><td>${esc(x.sku||'')}</td><td>${esc(x.orderNo||'')}</td><td class="num-r">${esc(x.orderQty||'')}</td><td class="num-r">${esc(x.packed||'')}</td><td class="num-r">${esc(x.unpacked||'')}</td><td class="num-r">${esc(x.qty||'')}</td><td class="num-r">${esc(x.uninspected||'')}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+  // 3. Sampling
+  const smp=data.sampling||{};
+  s+=`<div class="r-sec">${secTitle('3','抽样方案','Sampling Plan')}<div class="r-grid three">
+    ${kv('检验水平','Level',smp.level)}
+    ${kv('批量','Lot Size',smp.lot? (smp.lot+' pcs'):'')}
+    ${kv('样本量','Sample',smp.sample? (smp.sample+' pcs'):'')}
+    ${kv('抽样标准','Standard',smp.std,true)}
+  </div>`;
+  s+=`<table class="r-tbl"><thead><tr>
+    <th>等级 <span class="en">Level</span></th><th class="num-r">AQL</th><th class="center">Ac</th><th class="center">Re</th>
+    <th class="num-r">实际不良数 <span class="en">Actual</span></th><th class="center">判定 <span class="en">Verdict</span></th></tr></thead><tbody>
+    ${['CR','MA','MI'].map(sev=>{ const lc=sev.toLowerCase(); const cc=c[sev]||0;
+      const ac=smp['ac'+sev]; let v='Pass'; if(cc>0) v=(ac!==''&&cc<=parseInt(ac))?'Pass':'Fail';
+      return `<tr><td><div class="r-it">${sev==='CR'?'致命 Critical':sev==='MA'?'主要 Major':'次要 Minor'}</div></td>
+        <td class="num-r">${esc(smp['aql'+sev]||'0')}</td><td class="center">${esc(ac||'')}</td><td class="center">${esc(smp['re'+sev]||'')}</td>
+        <td class="num-r">${cc}</td><td class="center">${badgeHTML(v,'result')}</td></tr>`; }).join('')}
+  </tbody></table></div>`;
+  // 4. Fixed
+  if(data.fixed && Object.keys(data.fixed).length){
+    s+=`<div class="r-sec">${secTitle('4','检验项目','Inspection Items')}`;
+    const map={orderTable:['4.1 订单完成度','Order Completion',FIXED.orderTable],
+      docTable:['4.2 产品资料','Product Documentation',FIXED.docTable],
+      dimFxTable:['4.3 尺寸','Dimensions',FIXED.dimFxTable],
+      wtFxTable:['4.4 重量','Weight',FIXED.wtFxTable],
+      labelTable:['4.5 标签与标识','Labeling & Marking',FIXED.labelTable],
+      appTable:['4.6 外观细节','Appearance Details',FIXED.appTable]};
+    for(const tid in map){
+      // ---- 尺寸/重量：数值型表格（特殊表头） ----
+      if(tid==='dimFxTable'){
+        const rows=(data.fixed[tid]||[]).filter(r=>!showEmpty||(r.type||r.len||r.wid||r.hgt||r.dia||parseInt(r.def)));
+        if(!rows.length&&!showEmpty) continue;
+        const body=rows.map((r,i)=>`<tr><td class="center">${i+1}</td>
+          <td>${esc(r.type||'')}</td><td class="num-r">${esc(r.len||'')}</td><td class="num-r">${esc(r.wid||'')}</td><td class="num-r">${esc(r.hgt||'')}</td><td class="num-r">${esc(r.dia||'')}</td>
+          <td class="center">${esc(r.def||'0')}</td><td class="center">${badgeHTML(r.res||'Pass','result')}</td><td class="center">${badgeHTML(r.sev||'MI','sev')}</td></tr>`).join('');
+        s+=`<div style="margin:6px 0 10px;"><div class="r-sec-sub" style="margin-left:0">4.3 尺寸 <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">Dimensions</span></div>
+          <table class="r-tbl"><thead><tr>
+            <th style="width:26px" class="center">#</th><th>类别 <span class="en">Type</span></th><th class="num-r">长 <span class="en">Length</span></th><th class="num-r">宽 <span class="en">Width</span></th><th class="num-r">高 <span class="en">Height</span></th><th class="num-r">直径 <span class="en">Diameter</span></th>
+            <th class="center">不良数 <span class="en">Def</span></th><th class="center" style="width:58px">结果 <span class="en">Result</span></th><th class="center">等级 <span class="en">Sev</span></th></tr></thead>
+          <tbody>${body}</tbody></table></div>`;
+        continue;
+      }
+      if(tid==='wtFxTable'){
+        const rows=(data.fixed[tid]||[]).filter(r=>!showEmpty||(r.sku||r.net||r.gross||r.pkg||parseInt(r.def)));
+        if(!rows.length&&!showEmpty) continue;
+        const body=rows.map((r,i)=>`<tr><td class="center">${i+1}</td>
+          <td>${esc(r.sku||'')}</td><td class="num-r">${esc(r.net||'')}</td><td class="num-r">${esc(r.gross||'')}</td><td class="num-r">${esc(r.pkg||'')}</td>
+          <td class="center">${esc(r.def||'0')}</td><td class="center">${badgeHTML(r.res||'Pass','result')}</td><td class="center">${badgeHTML(r.sev||'MI','sev')}</td></tr>`).join('');
+        s+=`<div style="margin:6px 0 10px;"><div class="r-sec-sub" style="margin-left:0">4.4 重量 <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">Weight</span></div>
+          <table class="r-tbl"><thead><tr>
+            <th style="width:26px" class="center">#</th><th>SKU</th><th class="num-r">净重 <span class="en">Net Wt(kg)</span></th><th class="num-r">毛重 <span class="en">Gross Wt(kg)</span></th><th class="num-r">单个包装 <span class="en">Unit Pkg(kg)</span></th>
+            <th class="center">不良数 <span class="en">Def</span></th><th class="center" style="width:58px">结果 <span class="en">Result</span></th><th class="center">等级 <span class="en">Sev</span></th></tr></thead>
+          <tbody>${body}</tbody></table></div>`;
+        continue;
+      }
+      // ---- 标准 fx-tbl（order/doc/label/app） ----
+      const defs=map[tid][2];
+      const stored=(data.fixed[tid]||[]);
+      let rrows=defs.map((d,i)=>{
+        const st=stored[i]||{};
+        const itemCn=st.item||st.itemCn||d[0];
+        const itemEn=storedEnglish(st.itemEn||d[1]);
+        const std = (st.std!=null&&st.std!=='') ? st.std : d[2];
+        const stdEn = storedEnglish(st.stdEn||'');
+        const obs = (st.obs!=null&&st.obs!=='') ? st.obs : d[3];
+        const obsEn = storedEnglish(st.obsEn||'');
+        const res = st.res||d[5]||'Pass';
+        const def = (st.def!=null&&st.def!=='') ? st.def : (d[4]!=null?d[4]:'0');
+        const sev = st.sev||d[6]||'MI';
+        return {itemCn, itemEn, std, stdEn, obs, obsEn, res, def, sev};
+      });
+      for(let i=defs.length;i<stored.length;i++){
+        const st=stored[i]||{};
+        rrows.push({
+          itemCn: st.item||st.itemCn||'',
+          itemEn: storedEnglish(st.itemEn||''),
+          std: st.std||'',
+          stdEn: storedEnglish(st.stdEn||''),
+          obs: st.obs||'',
+          obsEn: storedEnglish(st.obsEn||''),
+          res: st.res||'Pass',
+          def: st.def||'0',
+          sev: st.sev||'MI'
+        });
+      }
+      const tbl=fixedTbl(tid, rrows, map[tid][0], map[tid][1], showEmpty);
+      if(tbl) s+=`<div style="margin:6px 0 10px;"><div class="r-sec-sub" style="margin-left:0">${map[tid][0]} <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">${map[tid][1]}</span></div>${tbl}</div>`;
+    }
+    s+=`</div>`;
+  }
+  // 5. Function & Safety
+  if((data.func||[]).length || (data.safe||[]).length){
+    s+=`<div class="r-sec">${secTitle('5','功能测试','Function Test')}`;
+    if(showEmpty || (data.func||[]).filter(r=>r.item||r.std||r.act).length){
+      s+=`<div class="r-sec-sub" style="margin-left:0">5.1 功能检验 <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">Function Test</span></div>${dynTbl(data.func, showEmpty)}`;
+    }
+    if(showEmpty || (data.safe||[]).length){
+      s+=`<div class="r-sec-sub" style="margin-left:0;margin-top:8px">5.2 安规检测 <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">Safety Test</span></div>${dynTbl(data.safe, showEmpty)}`;
+    }
+    s+=`</div>`;
+  }
+  // 6. Reliability
+  if((data.rel||[]).length){
+    s+=`<div class="r-sec">${secTitle('6','可靠性测试','Reliability Test')}`;
+    if(showEmpty || (data.rel||[]).filter(r=>r.item||r.std||r.act).length){
+      s+=`<div class="r-sec-sub" style="margin-left:0">6.1 可靠性检验 <span style="font-family:var(--font-en);font-size:8.5px;color:var(--muted)">Reliability Items</span></div>${dynTbl(data.rel, showEmpty)}`;
+    }
+    s+=`</div>`;
+  }
+  // 7. Defects
+  if((data.defects||[]).filter(d=>d.desc&&d.desc.trim()).length){
+    s+=`<div class="r-sec">${secTitle('7','缺陷记录','Defect Record')}`;
+    data.defects.filter(d=>d.desc&&d.desc.trim()).forEach((d,i)=>{
+      const meta=[];
+      if(d.link&&d.link.trim()) meta.push(`Reference: <b>${esc(d.link)}</b>`);
+      if(d.loc&&d.loc.trim()) meta.push(`Location: <b>${esc(d.loc)}</b>`);
+      const defectPhotos = (d.photos||[]).filter(p=>p && (p.src || p.photo_id));
+      if(defectPhotos.length) meta.push(`Photo(s): <b>${defectPhotos.length}</b>`);
+      s+=`<div class="r-defect"><div class="r-dh">
+        <span class="r-dno">${i+1}</span>${badgeHTML(d.sev||'MI','sev')}
+        <span class="r-dtype">${esc(d.type||'')}</span>
+        ${meta.length?`<span class="r-dmeta">${meta.join('')}</span>`:''}</div>
+        <div class="r-ddesc">${esc(d.desc)}</div>${defectPhotos.length ? `<div class="r-grid3" style="margin-top:8px">${photoGrid(defectPhotos)}</div>` : ''}</div>`;
+    });
+    s+=`</div>`;
+  }
+  // 8. Conclusion (moved before photos)
+  const conc=data.conclusion||{};
+  const v=conc.verdict||'PENDING';
+  s+=`<div class="r-sec r-conclusion">${secTitle('8','检验结论','Conclusion')}`;
+  s+=`<div class="r-verdict ${v==='FAIL'?'ng':''}"><div class="v-en">OVERALL VERDICT</div><div class="v-cn">${v==='PASS'?'PASS 通过':v==='FAIL'?'FAIL 不合格':'PENDING 待定'}</div></div>`;
+  s+=`<div class="r-dstats">缺陷统计 / Defect Counts：${['CR','MA','MI','N/A'].map(sev=>`<span class="badge ${badgeClass(sev,'sev')}">${sev} ${c[sev]}</span>`).join(' ')}</div>`;
+  if(conc.conc&&conc.conc.trim()) s+=`<div class="r-conc">结论说明 / Summary：${esc(conc.conc)}</div>`;
+  s+=`<div class="r-sign">
+    <div class="sb"><span class="sk">验货员 <span class="en">Inspector</span></span><div class="sline"></div><div class="slabel">签字 Signature：${esc(conc.sign1||'')}</div><div class="sline" style="margin-top:6px"></div><div class="slabel">日期 Date：${fmtDate(b.date)}</div></div>
+    <div class="sb"><span class="sk">审核人 <span class="en">Reviewer</span></span><div class="sline"></div><div class="slabel">签字 Signature：${esc(conc.sign2||'')}</div><div class="sline" style="margin-top:6px"></div><div class="slabel">日期 Date：____</div></div>
+    <div class="sb"><span class="sk">客户/工厂 <span class="en">Client / Factory</span></span><div class="sline"></div><div class="slabel">确认 Confirm：${esc(conc.sign3||'')}</div><div class="sline" style="margin-top:6px"></div><div class="slabel">日期 Date：____</div></div>
+  </div>`;
+  s+=`</div>`;
+
+  // 9. Photos (moved after conclusion)
+  const galHtml=GAL.map(g=>{
+    const imgs=(data.galleries&&data.galleries[g.id])||[];
+    const cards=photoGrid(imgs);
+    if(!cards) return '';
+    const n=imgs.filter(x=>x.src).length;
+    const keep = n<=6 ? ' keep' : '';
+    return `<div class="r-gpanel"><div class="r-gh">${g.name} <span class="en">${g.en}</span><span class="cnt">${n} photos</span></div><div class="r-grid3${keep}">${cards}</div></div>`;
+  }).join('');
+  const isOldProduct = String((b||{}).productMode||'new') === 'old';
+  if(galHtml && !isOldProduct){
+    s+=`<div class="r-sec">${secTitle('9','现场照片','Site Photos')}${galHtml}</div>`;
+  }
+
+  const root=`<div class="r-root">${html}${s}${rFoot()}</div>`;
+  $('reportView').innerHTML=root;
+  $('previewRoot').innerHTML=root;
+  _reportBuilt=true;
+}
+function countDefectsFrom(d){
+  const c={CR:0,MA:0,MI:0,'N/A':0};
+  d=d||{};
+  const fx=d.fixed||{};
+  Object.values(fx).forEach(rows=>{(rows||[]).forEach(r=>{ const sev=r.sev||'MI'; const n=parseInt(r.def||r.qty||0)||0; if(c[sev]!=null)c[sev]+=n; });});
+  ['func','safe','rel'].forEach(k=>{(d[k]||[]).forEach(r=>{ const sev=r.sev||'MI'; const n=parseInt(r.qty||0)||0; if(c[sev]!=null)c[sev]+=n; });});
+  (d.defects||[]).forEach(x=>{ const hasContent=(x.desc||'').trim(); if(c[x.sev]!=null&&hasContent) c[x.sev]++; });
+  return c;
+}
+
+/* ===================== Preview / Print / Blank ===================== */
+function showConsistencyError(errs){
+  const list=$('consErrList'); list.innerHTML=errs.map(e=>`<li>${esc(e)}</li>`).join('');
+  $('consErr').classList.add('on');
+}
+function openPreview(){
+  refreshAll();
+  const errs=getConsistencyErrors();
+  if(errs.length){ showConsistencyError(errs); return; }
+  buildReport(collect());
+  $('previewModal').classList.add('on');
+  $('previewModal').scrollTop=0;
+}
+function closePreview(){ $('previewModal').classList.remove('on'); }
+function exportBlank(){
+  buildReport(blankData());
+  $('previewModal').classList.add('on');
+  setTimeout(()=>{ window.print(); }, 120);
+}
+function doPrint(){
+  refreshAll();
+  const errs=getConsistencyErrors();
+  if(errs.length){ showConsistencyError(errs); return false; }
+  buildReport(collect());
+  $('previewModal').classList.add('on');
+  setTimeout(()=>{ window.print(); }, 120);
+  return true;
+}
+window.addEventListener('afterprint', ()=>{ $('previewModal').classList.remove('on'); });
+
+/* ===================== Dynamic add/delete helpers ===================== */
+function addFixedRow(tid){
+  const tb=$(tid).querySelector('tbody');
+  const tr=document.createElement('tr'); tr.className='fx-row'; tr.dataset.item='';
+  // 判断是否为新的含不良数/等级的表格（fx-tbl class）
+  const isFxTbl = $(tid).classList.contains('fx-tbl');
+  if(isFxTbl){
+    tr.innerHTML=`<td class="no-col center"></td>
+      <td><input class="fx-item-cn" placeholder="检验项(中)"><input class="fx-item-en pending" placeholder="English / 待翻译" readonly></td>
+      <td><textarea class="fx-std-cn" placeholder="标准要求(中)"></textarea><input class="fx-std-en pending" placeholder="Requirement (EN) / 待翻译"></td>
+      <td><textarea class="fx-obs-cn" placeholder="实测结果(中)"></textarea><input class="fx-obs-en pending" placeholder="Actual Result (EN) / 待翻译"></td>
+      <td class="center"><input class="fx-def num-r" type="number" min="0" value="0" style="width:54px;text-align:center;"></td>
+      <td class="center"><select class="fx-res res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o==='Pass'?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td class="center"><select class="fx-sev sev">${['CR','MA','MI','N/A'].map(o=>`<option value="${o}" ${o==='MI'?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td class="no-print center"><button class="row-del" onclick="delFixedRow(this,'${tid}')">×</button></td>`;
+  } else {
+    tr.innerHTML=`<td class="no-col center"></td>
+      <td><input class="fx-item-cn" placeholder="检验项(中)"><input class="fx-item-en pending" placeholder="English / 待翻译" readonly></td>
+      <td><textarea class="fx-std-cn" placeholder="标准要求(中)"></textarea><input class="fx-std-en pending" placeholder="Requirement (EN) / 待翻译"></td>
+      <td><textarea class="fx-obs-cn" placeholder="实测/观察(中)"></textarea><input class="fx-obs-en pending" placeholder="Actual (EN) / 待翻译"></td>
+      <td class="center"><select class="res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o==='Pass'?'selected':''}>${o}</option>`).join('')}</select></td>
+      <td class="no-print center"><button class="row-del" onclick="delFixedRow(this,'${tid}')">×</button></td>`;
+  }
+  autoTranslate(tr.querySelector('.fx-item-cn'),tr.querySelector('.fx-item-en'),TERM_EN);
+  autoTranslate(tr.querySelector('.fx-std-cn'),tr.querySelector('.fx-std-en'),REQ_EN);
+  autoTranslate(tr.querySelector('.fx-obs-cn'),tr.querySelector('.fx-obs-en'),REQ_EN);
+  tb.appendChild(tr);
+  renumber(tid);
+}
+function delFixedRow(btn,tid){
+  btn.closest('tr').remove();
+  renumber(tid);
+}
+function addDimRow(){
+  const tb=$('dimFxTable').querySelector('tbody');
+  const tr=document.createElement('tr');
+  tr.className='fx-row';
+  tr.innerHTML=`<td class="no-col center"></td>
+    <td><input class="fx-item-cn" value="" placeholder="类别"></td>
+    <td><input class="num-r dim-len" value="" placeholder="长"></td>
+    <td><input class="num-r dim-wid" value="" placeholder="宽"></td>
+    <td><input class="num-r dim-hgt" value="" placeholder="高"></td>
+    <td><input class="num-r dim-dia" value="" placeholder="直径"></td>
+    <td><input class="num-r fx-def" type="number" min="0" value="0" style="width:50px"></td>
+    <td class="center"><select class="fx-res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o==='Pass'?'selected':''}>${o}</option>`).join('')}</select></td>
+    <td class="center"><select class="fx-sev">${['CR','MA','MI','N/A'].map(o=>`<option ${o==='MI'?'selected':''}>${o}</option>`).join('')}</select></td>
+    <td class="no-print center"><button class="row-del" onclick="this.closest('tr').remove();renumber('dimFxTable')">×</button></td>`;
+  tb.appendChild(tr);
+  renumber('dimFxTable');
+}
+function addWtRow(){
+  const tb=$('wtFxTable').querySelector('tbody');
+  const tr=document.createElement('tr');
+  tr.className='fx-row';
+  tr.innerHTML=`<td class="no-col center"></td>
+    <td><input class="fx-item-cn wt-sku" value="" placeholder="SKU"></td>
+    <td><input class="num-r wt-net" value="" placeholder="净重"></td>
+    <td><input class="num-r wt-gross" value="" placeholder="毛重"></td>
+    <td><input class="num-r wt-pkg" value="" placeholder="单个包装"></td>
+    <td><input class="num-r fx-def" type="number" min="0" value="0" style="width:50px"></td>
+    <td class="center"><select class="fx-res">${['Pass','Fail','Pending','N/A'].map(o=>`<option ${o==='Pass'?'selected':''}>${o}</option>`).join('')}</select></td>
+    <td class="center"><select class="fx-sev">${['CR','MA','MI','N/A'].map(o=>`<option ${o==='MI'?'selected':''}>${o}</option>`).join('')}</select></td>
+    <td class="no-print center"><button class="row-del" onclick="this.closest('tr').remove();renumber('wtFxTable')">×</button></td>`;
+  tb.appendChild(tr);
+  renumber('wtFxTable');
+}
+
+/* ===================== 预设行清理（新建报告时只留 1 行空行） ===================== */
+function trimPresetRows(){
+  ['dimFxTable','wtFxTable'].forEach(tid=>{
+    const root=$(tid); if(!root) return;   // 表格已并入检验项目(Section 4 fx-tbl)则跳过
+    const tb=$(tid).querySelector('tbody');
+    if(!tb) return;
+    const rows=Array.from(tb.querySelectorAll('tr'));
+    let lastNonEmpty=-1;
+    rows.forEach((r,i)=>{
+      // 仅检测文本输入框(input)，结果下拉(select,默认"Pass")不计入"有内容"
+      const vals=Array.from(r.querySelectorAll('input')).map(el=>(el.value||'').trim());
+      if(vals.some(v=>v!=='')) lastNonEmpty=i;
+    });
+    let kept=0;
+    rows.forEach((r,i)=>{
+      if(i<=lastNonEmpty) { kept++; return; }
+      if(kept<=lastNonEmpty+1) { kept++; return; }
+      r.remove();
+    });
+    renumber(tid);
+  });
+}
+
+/* ===================== Init ===================== */
+function genRepNo(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return 'QC-'+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'-'+String(Math.floor(Math.random()*9000)+1000); }
+function init(){
+  _verdictManual=false;  // 判定默认自动模式
+  buildFixed();
+  buildGalleries();
+  addSku();
+  addDyn('funcBody','func', {item:'',itemEn:'',std:'',stdEn:'',act:'',actEn:'',qty:'0',res:'Pass',sev:'MA'});
+  DYN_PRESETS.safe.forEach(r=>addDyn('safeBody','safe',{...r,act:'',actEn:'',qty:'0',res:'Pass',sev:'CR'}));
+  (DYN_PRESETS.rel||[]).forEach(r=>addDyn('relBody','rel',{...r,act:'',actEn:'',qty:'0',res:'Pass',sev:'MI'}));
+  addDimRow();
+  addWtRow();
+  // 缺陷记录是可选项：只有检验员点击“添加缺陷”后才创建缺陷行，
+  // 避免空白占位行被一致性校验误判为“缺陷 #1”。
+  ['s_lot','s_sample','s_aql_cr','s_aql_ma','s_aql_mi','s_ac_cr','s_ac_ma','s_ac_mi','s_re_cr','s_re_ma','s_re_mi'].forEach(id=>bindNumSanitize($(id)));
+  const rn=genRepNo(); $('cover_repno').textContent=rn;
+  updateVerdictBox();
+  // 注意：loadDraft 已移至此处，改由 onRender() 统一调度
+  // 避免 init() 盲目加载 localStorage 旧草稿覆盖 Python 下发的正确数据
+  trimPresetRows();  // 清理多余预设行：只留 1 行空白
+  refreshAll();
+}
+init();
+</script>
+<style>
+
+/* Streamlit 双向桥 — 操作条样式（仅作用于注入的 actionbar，不改模板） */
+.toolbar { display: none !important; }
+#st_actionbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10000;
+  display: flex; align-items: center; gap: 10px;
+  min-height: 52px; box-sizing: border-box; padding: 8px 16px;
+  background: #0f172a; color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  box-shadow: 0 2px 10px rgba(0,0,0,.18);
+}
+/* 给表单顶部留出操作条空间，避免遮挡首行 */
+#formView { padding-top: 52px; }
+.st-ab-title { font-weight: 600; font-size: 14px; letter-spacing: .3px; margin-right: auto; }
+.st-ab-hint { font-size: 12px; color: #94a3b8; }
+.st-ab-btn {
+  border: 0; border-radius: 6px; padding: 7px 14px; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: filter .15s ease; color: #fff;
+}
+.st-ab-btn:hover { filter: brightness(1.08); }
+.st-ab-btn:active { filter: brightness(.94); }
+.st-ab-save { background: #475569; }
+.st-ab-export { background: #0ea5e9; }
+.st-ab-submit { background: #4f46e5; }
+@media print {
+  #st_actionbar { display: none !important; }
+}
+</style>
+
+<!-- ============ Streamlit 双向桥 ============ -->
+<div id="st_actionbar">
+  <span class="st-ab-title">在线 QC 检验报告</span>
+  <span id="st_ab_hint" class="st-ab-hint"></span>
+  <button id="st_save_draft" class="st-ab-btn st-ab-save" type="button">💾 保存草稿</button>
+  <button id="st_preview" class="st-ab-btn st-ab-preview" type="button">🔎 PDF 预览</button>
+  <button id="st_template" class="st-ab-btn st-ab-template" type="button">📄 空白模板</button>
+  <button id="st_export_pdf" class="st-ab-btn st-ab-export" type="button">🖨️ 导出 PDF</button>
+  <button id="st_submit" class="st-ab-btn st-ab-submit" type="button">📤 提交审核</button>
+</div>
+<!-- 双向桥：内联 Streamlit 组件协议 + 模板能力对接（无外部依赖，离线可用） -->
+<script type="module">
+// ===== 内联 Streamlit 组件协议（源自官方 streamlit-component-lib，去除 Arrow/React 依赖）=====
+const Streamlit = (() => {
+  const API_VERSION = 1;
+  const RENDER_EVENT = "streamlit:render";
+  let _ready = false;
+  let _lastH = 0;
+  const _et = new EventTarget();
+  function _send(type, data) {
+    try { window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, data), "*"); }
+    catch (e) { console.error("streamlit send", e); }
+  }
+  function _onMessage(ev) {
+    const d = ev && ev.data;
+    if (!d || d.type !== RENDER_EVENT) return;
+    const args = (d.args != null) ? d.args : {};
+    _et.dispatchEvent(new CustomEvent(RENDER_EVENT, { detail: { disabled: !!d.disabled, args: args, theme: d.theme } }));
+  }
+  function setComponentReady() {
+    if (!_ready) { window.addEventListener("message", _onMessage); _ready = true; }
+    _send("streamlit:componentReady", { apiVersion: API_VERSION });
+  }
+  function setFrameHeight(h) {
+    if (h === undefined || h === null) h = document.body.scrollHeight;
+    h = Math.round(h);
+    if (h === _lastH) return;
+    _lastH = h;
+    _send("streamlit:setFrameHeight", { height: h });
+  }
+  function setComponentValue(value) {
+    _send("streamlit:setComponentValue", { value: value, dataType: "json" });
+  }
+  return { events: _et, setComponentReady: setComponentReady, setFrameHeight: setFrameHeight, setComponentValue: setComponentValue };
+})();
+
+// ===== 桥接模板全局能力 =====
+const $ = (id) => document.getElementById(id);
+const buildReport = window.buildReport;
+const applyData   = window.applyData;
+const blankData   = window.blankData;
+const collect     = window.collect;
+
+function setH() {
+  try { Streamlit.setFrameHeight(Math.max(document.documentElement.scrollHeight || 0, 640)); } catch (e) {}
+}
+// 异步照片回填会继续增加组件高度，及时通知外层页面，避免按旧高度截断滚动区域。
+let _heightTimer = null;
+function scheduleHeightSync() {
+  clearTimeout(_heightTimer);
+  _heightTimer = setTimeout(() => setH(), 80);
+}
+function watchContentHeight() {
+  if (typeof ResizeObserver === 'undefined') return;
+  const observer = new ResizeObserver(scheduleHeightSync);
+  observer.observe(document.documentElement);
+  window.__QMS_HEIGHT_OBSERVER__ = observer;
+}
+function showBar() { const b = $('st_actionbar'); if (b) b.style.display = 'flex'; }
+function hideBar() { const b = $('st_actionbar'); if (b) b.style.display = 'none'; }
+
+function applyReportView(data) {
+  try { if (buildReport) buildReport(data); } catch (e) { console.error('buildReport', e); }
+  const fv = $('formView'), rv = $('reportView');
+  if (fv) fv.style.display = 'none';
+  if (rv) rv.style.display = 'block';
+  hideBar();
+}
+function applyEdit(data) {
+  try {
+    if (data) {
+      if (data.repno && $('cover_repno')) $('cover_repno').textContent = data.repno;
+      // A newly-created remote draft only contains repno. Merge it with the
+      // complete template so all preset inspection rows are present while
+      // actual-result fields remain blank for the inspector.
+      const base = (blankData && (!data.fixed || !data.sampling)) ? blankData() : null;
+      if (base) {
+        const merged = Object.assign(base, data);
+        ['basic','sampling','conclusion'].forEach(k=>{
+          if (data[k]) merged[k] = Object.assign(base[k] || {}, data[k]);
+        });
+        if (applyData) applyData(merged);
+      } else if (applyData) applyData(data);
+    } else {
+      if (blankData) applyData(blankData());
+    }
+  } catch (e) { console.error('applyEdit', e); }
+  const fv = $('formView'), rv = $('reportView');
+  if (fv) fv.style.display = 'block';
+  if (rv) rv.style.display = 'none';
+  showBar();
+}
+
+// Streamlit 每次 rerun（args 变化）都会通过 "streamlit:render" 事件下发最新 args
+let _lastSig = null;
+let _locked = false;
+function applyLockUI(){
+  const fv = $('formView');
+  if(!fv) return;
+  const banner = $('lockBanner');
+  if(_locked){
+    if(!banner){
+      const b=document.createElement('div'); b.id='lockBanner';
+      b.style.cssText='background:#fef3c7;border:1px solid #f59e0b;color:#92400e;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px;';
+      b.innerHTML='<span>🔒 本报告已提交审核，处于<b>锁定</b>状态，照片与内容不可修改。</span>'+
+        '<button type="button" id="lockForce" style="margin-left:auto;background:#92400e;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;">🔓 管理员强制编辑</button>';
+      fv.insertBefore(b, fv.firstChild);
+      b.querySelector('#lockForce').addEventListener('click', ()=>{ _locked=false; if(b.parentNode) b.remove(); applyLockUI(); setHint('已解锁，可修改（修改后建议重新提交审核）'); });
+    }
+    fv.querySelectorAll('input:not([type=file]):not([type=button]):not([type=submit]),select,textarea').forEach(el=>{ el.setAttribute('readonly','readonly'); el.disabled=true; });
+    fv.querySelectorAll('.dropzone,.mob-up-bar,.g-rm,.row-del').forEach(el=>el.style.display='none');
+    ['st_save_draft','st_submit','st_export_pdf','st_preview','st_template'].forEach(id=>{ const e=$(id); if(e) e.disabled=true; });
+  } else {
+    if(banner && banner.parentNode) banner.remove();
+    fv.querySelectorAll('input,select,textarea').forEach(el=>{ el.removeAttribute('readonly'); if(el.type!=='file') el.disabled=false; });
+    fv.querySelectorAll('.dropzone,.mob-up-bar,.g-rm,.row-del').forEach(el=>el.style.display='');
+    ['st_save_draft','st_submit','st_export_pdf','st_preview','st_template'].forEach(id=>{ const e=$(id); if(e) e.disabled=false; });
+  }
+}
+function onRender(raw) {
+  // Streamlit 将组件参数包成 {args:{data,mode,photo}, default, key}，这里取内层真实 args
+  const args = (raw && raw.args && typeof raw.args === 'object') ? raw.args : (raw || {});
+  window.__PHOTO__ = args.photo || null;
+  window.__PHOTO_SEQ__ = 0;
+  // 注入报告元数据供 PDF 直通 API 使用
+  if (args.report_id) window._qmsReportId = args.report_id;
+  if (args.report_no) window._qmsReportNo = args.report_no;
+  // 推断 streamlitBaseUrl（从 iframe 的 streamlitUrl 参数提取）
+  try { const p=new URLSearchParams(window.location.search); const su=p.get('streamlitUrl'); if(su) window._streamlitBaseUrl=su; } catch(e){}
+  const mode = args.mode || 'edit';
+  const payload = args.data || null;
+  _locked = !!args.locked;
+  // 签名守卫：相同数据不重复回填，避免 ① 图库照片倍增 ② 覆盖用户未保存的修改
+  const sig = (mode||'') + '|' + (_locked?'L':'') + '|' + (payload ? JSON.stringify(payload) : '∅');
+  if (sig === _lastSig) { applyLockUI(); setH(); setTimeout(setH, 350); return; }
+  _lastSig = sig;
+  if (mode === 'view') { applyReportView(payload); }
+  // 编辑/新建且 data 非空时才回填：模板 init() 已初始化空白表单，
+  // 空 data 的 render 事件异步到达会覆盖用户已填的内容
+  else if (payload) {
+    // A same-report browser draft is the user's most recent edit. Streamlit
+    // can rerun with an older Python payload while a save is still in flight;
+    // never let that payload overwrite the local draft.
+    const draft=readDraft();
+    applyEdit(draft || payload);
+    _verdictManual=true;  // Python 下发的数据含原判定，保留不自动覆盖
+    refreshAll();  // 用回填后的数据重算 AQL / 缺陷统计 / 判定
+  } else if (mode === 'edit') {
+    // 无 Python 数据时才 fallback 到 localStorage（纯浏览器端草稿恢复）
+    const hasDraft=loadDraft();
+    if(hasDraft) _verdictManual=true;
+    refreshAll();
+  }
+  applyLockUI();
+  setH();
+  setTimeout(setH, 350);
+}
+
+function bindBar() {
+  const sd = $('st_save_draft'), sb = $('st_submit'), ep = $('st_export_pdf');
+  const pv = $('st_preview'), bt = $('st_template');
+  // 统一由事件监听绑定，避免 inline onclick 与兜底监听重复触发。
+  if (sd) sd.addEventListener('click', stSaveDraft);
+  if (ep) ep.addEventListener('click', stExportPdf);
+  if (sb) sb.addEventListener('click', stSubmit);
+  if (pv) pv.addEventListener('click', openPreview);
+  if (bt) bt.addEventListener('click', exportBlank);
+}
+
+function setHint(msg) {
+  const h = $('st_ab_hint');
+  if (h) { h.textContent = msg; h.style.opacity = '1'; }
+  if (!msg) return; // 清空时不设超时
+  if (setHint._timer) clearTimeout(setHint._timer);
+  setHint._timer = setTimeout(() => { const h2 = $('st_ab_hint'); if (h2) h2.textContent = ''; }, 3000);
+}
+
+function stSaveDraft() {
+  setHint('正在保存草稿…');
+  try { const d = (collect ? collect() : {}); Streamlit.setComponentValue({ type: 'save_draft', data: d }); }
+  catch (e) { console.error('保存失败', e); setHint('保存失败，请查看控制台'); }
+}
+
+function stExportPdf() {
+  /* 纯导出功能：收集当前表单数据 → 发后端生成 PDF → 浏览器即时弹出保存窗口。
+     不做任何翻译等待（翻译在用户输入时已完成），不阻塞，不依赖其他异步状态。 */
+  setHint('正在生成 PDF…');
+  try {
+    var d = (collect ? collect() : {});
+    var baseUrl = photoBase();
+    var apiUrl = baseUrl + '/api/export-pdf';
+    var payload = { data: d };
+    if (window._qmsReportId) payload.report_id = window._qmsReportId;
+    if (window._qmsReportNo) payload.report_no = window._qmsReportNo;
+    if (!payload.report_no && d.repno) payload.report_no = d.repno;
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+    .then(async function(resp) {
+      if (!resp.ok) {
+        var errBody = '';
+        try { var clone = resp.clone(); errBody = await clone.text(); } catch(e2){}
+        var err = { msg: 'HTTP ' + resp.status };
+        try { err = JSON.parse(errBody); } catch(e3) {}
+        console.error('[PDF导出] 服务端错误:', resp.status, err);
+        throw new Error(err.msg || ('服务器错误 ' + resp.status + (errBody ? ': ' + errBody.slice(0,200) : '')));
+      }
+      var ct = resp.headers.get('content-type') || '';
+      if (ct.indexOf('application/pdf') !== -1 || ct.indexOf('application/octet-stream') !== -1) {
+        var blob = await resp.blob();
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        /* 文件名：优先取服务端 Content-Disposition（兼容 filename= 和 filename*=RFC5987），其次用报告名称 */
+        var cd = resp.headers.get('content-disposition') || '';
+        var cdMatch = cd.match(/filename="(.+?)"/) || cd.match(/filename\*=UTF-8''(.+?)(?:;|$)/);
+        var serverName = cdMatch ? (cdMatch[1] ? decodeURIComponent(cdMatch[1]) : '') : '';
+        var fallback = 'DRAFT_report.pdf';
+        if (d && d.basic && d.basic.title) {
+          fallback = d.basic.title.replace(/[\\/:*?"<>|]+/g, '-').slice(0, 80).replace(/^[\s.|-]+/, '') + '.pdf';
+          if (fallback.length < 6) fallback = 'DRAFT_report.pdf';
+        }
+        /* 服务端名称解码后优先使用（通常含中文报告名）；若为空则用前端 fallback */
+        a.download = (serverName && serverName.indexOf('.') !== -1) ? serverName : fallback;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() { URL.revokeObjectURL(url); a.remove(); }, 1000);
+        setHint('\u2705 PDF \u5BFC\u51FA\u6210\u529F');
+      } else {
+        var j = await resp.json();
+        throw new Error(j.msg || '\u672A\u77E5\u54CD\u5E94\u684C\u5F0F');
+      }
+    })
+    .catch(function(e) {
+      console.error('[PDF导出] 失败:', e.message);
+      setHint('PDF 导出失败：' + e.message);
+    });
+  }
+  catch (e) { console.error('导出 PDF 失败', e); setHint('导出失败，请查看控制台'); }
+}
+
+function stSubmit() {
+  setHint('正在提交审核…（等待翻译完成）');
+  try {
+    waitForTranslations().then(()=>{
+      const d = (collect ? collect() : {});
+      // 不使用 iframe 内 confirm：公网/钉钉 WebView 可能拦截 confirm，导致按钮看似无反应。
+      Streamlit.setComponentValue({
+        type: 'submit',
+        request_id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        data: d,
+      });
+    }).catch(()=>{ setHint('提交失败，请重试'); });
+  }
+  catch (e) { console.error('提交失败', e); setHint('提交失败，请查看控制台'); }
+}
+
+window.stSaveDraft = stSaveDraft;
+window.stExportPdf = stExportPdf;
+window.stSubmit = stSubmit;
+window.setHint = setHint;  // 供经典脚本（照片上传 handleFiles/uploadPhoto）调用
+
+// 不再在 iframe 内操作父页面 DOM（曾导致 Streamlit React 重渲染 iframe 被卸载）
+// 所有样式隐藏已由 page_reports.py 的 _fullscreen_editor() 通过 CSS 完成
+
+Streamlit.setComponentReady();
+watchContentHeight();
+Streamlit.events.addEventListener("streamlit:render", function (e) {
+  onRender(e && e.detail ? e.detail.args : {});
+});
+
+if (document.readyState !== 'loading') bindBar();
+else document.addEventListener('DOMContentLoaded', bindBar);
+
+setTimeout(setH, 350);
+</script>
+
+</body>
+</html>

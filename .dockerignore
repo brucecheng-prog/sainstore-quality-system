@@ -1,0 +1,12 @@
+.git
+.gitignore
+.DS_Store
+.cache
+.workbuddy
+venv
+__pycache__
+*.pyc
+data/backups
+data/*.log
+data/relay_url.txt
+.deploy_token

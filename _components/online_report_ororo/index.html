@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>产品质量检验报告 · Ororo</title>
+<style>
+  /* 以下颜色取自 Ororo 原始 Word 模板：深蓝 #1F4E79、栏标题 #2E75B6。 */
+  :root{--navy:#1f4e79;--blue:#2e75b6;--light:#e8edf3;--line:#808080;--paper:#fff;--ink:#000;--muted:#5d6d7d;--green:#e2efda;--yellow:#fff9e6}
+  *{box-sizing:border-box} body{margin:0;background:#dfe5eb;color:var(--ink);font-family:Arial,"Microsoft YaHei","PingFang SC",sans-serif;font-size:10px}
+  .toolbar{position:sticky;top:0;z-index:20;background:#102b47;color:#fff;padding:10px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 10px #0002}.toolbar strong{margin-right:auto;font-size:14px}.toolbar button{border:0;border-radius:5px;padding:7px 12px;background:#fff;color:#183955;font-weight:700;cursor:pointer}.toolbar button.primary{background:#52a9e5;color:#fff}
+  /* 原始 Ororo Word 模板为 A4 横向：297mm × 210mm。 */
+  .paper{width:297mm;min-height:210mm;margin:24px auto;background:var(--paper);box-shadow:0 3px 18px #24384a33;padding:9mm 8mm 10mm}
+  .meta{border:1px solid var(--navy);display:grid;grid-template-columns:1.25fr 1.5fr 1fr 1fr;padding:4px 8px;font:700 11px Georgia,"Times New Roman",serif;color:var(--navy)}.meta span{white-space:nowrap}.hero{height:74px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;position:relative}.hero img{position:absolute;right:16px;top:9px;width:145px;height:auto;max-height:40px;object-fit:contain}.hero h1{margin:0;text-align:center;font:700 18px Georgia,"Times New Roman",serif;letter-spacing:.2px;line-height:1.24}.hero h1 small{display:block;font:700 16px Georgia,"Times New Roman",serif;margin-top:2px}.band{background:var(--blue);color:#fff;font-size:13px;font-weight:700;padding:5px 8px;margin-top:1px}.band span{font-size:11px;font-weight:400;margin-left:8px;opacity:.9}.source-grid{border-top:0;font-size:10px}.source-grid td{height:24px;padding:2px 4px;line-height:1.1}.source-grid .source-label{background:var(--light);text-align:center;font-weight:700;white-space:nowrap}.source-grid input:not([type=checkbox]):not([type=radio]){width:100%;border:0;background:transparent;font:inherit;color:var(--ink);outline:none}.source-grid .source-note{background:var(--yellow);font-size:9px}.yellow{background:var(--yellow)}.green{background:var(--green)}
+  table{width:100%;border-collapse:collapse;table-layout:fixed} th,td{border:1px solid var(--line);padding:2px 4px;vertical-align:middle;line-height:1.14} th{background:var(--blue);color:#fff;text-align:center;font-weight:700} td.center,th.center{text-align:center}.subhead{background:var(--light);color:#33495d;font-weight:700;text-align:center}.tight td{padding:2px 4px}.checks{white-space:normal;text-align:center}.checks label{margin-right:1px;display:inline-block;font-size:9px;white-space:nowrap}.checks input{vertical-align:-2px;margin:0;transform:scale(.85)}.note{background:var(--yellow);padding:4px 6px;border:1px solid var(--line);border-top:0}.result-box{display:grid;grid-template-columns:1fr 1fr;padding:0}.result-box>div{padding:5px;border:1px solid var(--line);border-top:0;min-height:32px}.result-box input{accent-color:var(--blue)}.photo-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-top:0}.photo-slot{border-right:1px solid var(--line);min-width:0}.photo-slot:nth-child(4n){border-right:0}.photo{height:260px;border-bottom:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#8b969f;background:#f7f9fc;overflow:hidden}.photo input{display:none}.photo .inner{width:100%;height:100%;padding:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}.photo img{display:block;width:100%!important;height:100%!important;max-width:100%;max-height:100%;object-fit:cover}.photo .icon{font-size:18px;display:block;margin-bottom:4px;color:#9da9b4}.photo-desc{height:24px;border-top:1px solid var(--line);padding:4px 6px;white-space:nowrap;font-family:Georgia,"Times New Roman",serif}.photo-desc input{width:72%;border:0;border-bottom:1px solid #bdc7d0;background:transparent;outline:none;font:inherit}#warehousePhotos .photo{height:26px}body:not(.report-view) #warehousePhotos .photo{height:72px}body:not(.report-view) #warehousePhotos .photo .inner{padding:4px}#fabricRows tr:nth-child(11){break-before:page;page-break-before:always}.sign td{height:32px}.small{font-size:10px;color:var(--muted)}.section-gap{margin-top:3px}.footer-note{font-size:9px;line-height:1.25;border:1px solid var(--line);border-top:0;padding:5px}.hidden{display:none!important}.template-row-actions{padding:5px 0 8px;text-align:right}.template-row-actions button,.row-remove{border:1px solid #8aa6be;background:#fff;color:#1f4e79;border-radius:3px;cursor:pointer;font-size:10px;padding:2px 7px}.row-remove{float:right;color:#b42318;border-color:#efc1bd;padding:0 5px}.mobile-photo-bar{display:flex;align-items:center;gap:8px;margin:8px 0;padding:7px 10px;border:1px solid #9fc5e8;background:#eef6ff;color:#1f4e79}.mobile-photo-bar strong{font-size:11px}.mobile-photo-bar .actions{margin-left:auto;display:flex;gap:6px}.mobile-photo-bar button{border:1px solid #8aa6be;background:#fff;color:#1f4e79;border-radius:3px;padding:3px 7px;cursor:pointer}.mobile-qr{padding:10px;text-align:center;border:1px dashed #8aa6be;background:#f9fcff;margin:-8px 0 8px}.mobile-qr-tip{font-size:10px;color:var(--muted);margin-top:5px}
+  @media print{ @page{size:A4 landscape;margin:0} body{background:#fff}.toolbar,.no-print{display:none!important}.paper{margin:0;box-shadow:none;width:297mm;min-height:210mm;padding:9mm 8mm 10mm}.page-break{page-break-before:always}.photo{height:260px!important}#warehousePhotos .photo{height:26px!important}}
+  @media(max-width:900px){.paper{width:100%;margin:0;padding:16px;box-shadow:none}.meta{grid-template-columns:1fr 1fr;gap:5px}.info{grid-template-columns:repeat(2,1fr)}.cell:nth-child(4n){border-right:1px solid var(--line)}.cell:nth-child(2n){border-right:0}.photo{height:95px}.toolbar{position:static;flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="toolbar"><strong>Ororo 专用产品质量检验报告</strong><span class="small" style="color:#c5d7e7">与通用报告共用保存、拍照、审核、权限及 NAS 归档流程</span><button id="ororoSave">保存草稿</button><button id="ororoExport">导出 PDF</button><button id="ororoSubmit" class="primary">提交审核</button><button id="editBtn">编辑模式</button><button id="viewBtn">报告预览</button><button onclick="window.print()">打印</button></div>
+<main class="paper" id="formView">
+  <div class="meta"><span>编制 / Prepared by: 品质部 QC Dept.</span><span>文件名称 / Doc. Name: 产品质量检验单 Product Quality Inspection Sheet</span><span>文件编号 / Doc. No.: PQ5-A3-01</span><span>文件版次 / Rev.: B4</span></div>
+  <div class="hero"><img src="../online_report_v2/company_logo.png" onerror="this.onerror=null;this.src='/component/_online_report_component_v3.online_report_v3/company_logo.png'" alt="SainStore"><h1>产品质量检验报告<small>Product Quality Inspection Report</small></h1></div>
+  <div class="band">A&nbsp;&nbsp;基本信息 <span>Basic Information</span></div>
+  <table class="source-grid"><tbody>
+    <tr><td class="source-label">供应商 / Supplier</td><td><input data-k="supplier"></td><td class="source-label">PO号 / PO No.</td><td><input data-k="po"></td><td class="source-label">品牌 / Brand</td><td><input data-k="brand" value="ororo"></td><td class="source-label">检验日期 / Inspect. Date</td><td><input data-k="date" type="date"></td></tr>
+    <tr><td class="source-label">品名描述 / Description</td><td><input data-k="description"></td><td class="source-label">产品型号 / Model</td><td><input data-k="model"></td><td class="source-label">SKU</td><td><input data-k="sku"></td><td class="source-label">检验员 / Inspector</td><td><input data-k="inspector"></td></tr>
+    <tr><td class="source-label">颜色 / Color</td><td><input data-k="color"></td><td class="source-label">尺码范围 / Size Range</td><td><input data-k="sizeRange"></td><td class="source-label">订单数量 / Order Qty</td><td><input data-k="orderQty"></td><td class="source-label">审核人 / Auditor</td><td><input data-k="auditor"></td></tr>
+    <tr><td class="source-label">服装批次 / Garment Batch</td><td colspan="2"><input data-k="garmentBatch"></td><td class="source-label">模块批次 / Module Batch</td><td colspan="2"><input data-k="moduleBatch"></td><td class="source-label">参考文件 / Reference</td><td><input value="ororo 工单 / Tech Pack / Size Chart" data-k="reference"></td></tr>
+  </tbody></table>
+
+  <div class="band">B&nbsp;&nbsp;抽样标准 <span>Sampling Standard</span></div>
+  <table class="source-grid"><tbody><tr><td class="source-label">抽样标准 / Sampling Std.</td><td>ANSI/ASQC Z1.4-2008</td><td class="source-label">检验水平 / Inspect. Level</td><td>General Level II / 一般水平 II</td><td class="source-label">检验类型 / Type</td><td colspan="3" class="checks"><label><input type="checkbox"> Normal 正常</label><label><input type="checkbox"> Tightened 加严</label><label><input type="checkbox"> Reduced 放宽</label></td></tr><tr><td class="source-label">检验批量 / Lot Size</td><td><input data-k="lotSize"></td><td class="source-label">抽样数量 / Sample Size</td><td><input data-k="sampleSize"></td><td class="source-label">AQL CR / MA / MI</td><td colspan="3" class="center"><b>CR: 0　MA: 0.4　MI: 1.5</b></td></tr><tr><td class="source-label">Ac/Re CR</td><td><input data-k="acReCR"></td><td class="source-label">Ac/Re MA</td><td><input data-k="acReMA"></td><td class="source-label">Ac/Re MI</td><td><input data-k="acReMI"></td><td class="source-label">总判定 / Overall</td><td class="checks">□ PASS　□ FAIL　□ PENDING</td></tr></tbody></table>
+  <div class="section-gap"></div>
+  <div class="band">C&nbsp;&nbsp;尺寸测量记录 <span>Size Measurement Record</span></div>
+  <table class="source-grid"><tbody><tr><td class="source-label" colspan="2">总判定 / Overall Result</td><td class="green checks" colspan="2"><label><input type="radio" name="sizeResult"> PASS 合格</label> <label><input type="radio" name="sizeResult"> FAIL 不合格</label> <label><input type="radio" name="sizeResult"> PENDING 待定</label></td><td class="source-label" colspan="2">判定依据 / Basis</td><td class="yellow" colspan="2">参照附件实测数据（ororo 尺寸表 / Size Chart） / Refer to attached actual measurement data</td></tr><tr><td class="source-label" colspan="2">备注 / Remarks</td><td colspan="6"><input data-k="remarks"></td></tr><tr><td class="source-note center" colspan="8">详细尺寸数据参照附件实测数据（ororo 尺寸表 / Size Chart），本表仅记录总判定结果。/ Detailed size data refer to the attached actual measurement data (ororo Size Chart). This section records overall judgment only.</td></tr></tbody></table>
+
+  <div class="band">D&nbsp;&nbsp;面料与外观检验 <span>Fabric &amp; Appearance Inspection</span></div>
+  <table class="tight"><tr><th style="width:5%">序号<br>No.</th><th style="width:22%">检验项目<br>Inspection Item</th><th style="width:37%">标准要求<br>Standard Requirement</th><th style="width:15%">结果<br>Result</th><th style="width:13%">缺陷描述<br>Defect Desc.</th><th style="width:8%">缺陷等级<br>Class</th></tr><tbody id="fabricRows"></tbody></table>
+  <div class="template-row-actions no-print"><button type="button" data-add-row="fabric">+ 新增检验项目</button></div>
+
+  <div class="band">E&nbsp;&nbsp;工艺检验 <span>Workmanship Inspection</span></div>
+  <table class="tight"><tr><th style="width:5%">序号</th><th style="width:22%">检验项目 / Inspection Item</th><th style="width:37%">标准要求 / Standard Requirement</th><th style="width:15%">结果 / Result</th><th style="width:13%">缺陷描述</th><th style="width:8%">Class</th></tr><tbody id="workRows"></tbody></table>
+  <div class="template-row-actions no-print"><button type="button" data-add-row="work">+ 新增检验项目</button></div>
+
+  <div class="band">F&nbsp;&nbsp;辅料与包装检验 <span>Trims &amp; Packaging Inspection</span></div>
+  <table class="tight"><tr><th style="width:5%">序号</th><th style="width:22%">检验项目 / Inspection Item</th><th style="width:37%">标准要求 / Standard Requirement</th><th style="width:15%">结果 / Result</th><th style="width:13%">缺陷描述</th><th style="width:8%">Class</th></tr><tbody id="trimRows"></tbody></table>
+  <div class="template-row-actions no-print"><button type="button" data-add-row="trim">+ 新增检验项目</button></div>
+
+  <div class="band">G&nbsp;&nbsp;功能性测试（加热服装） <span>Functional Testing (Heated Apparel)</span></div>
+  <div class="note">测试方法与标准要求：请参照对应发热模组规格书（含开机/关机、预热、档位切换、灯光指示、自动降档、老化测试等全部功能参数） / Test Method &amp; Standard: Refer to the applicable heating module specification sheet (covering all functional parameters including power on/off, preheat, level switching, LED indicator, auto-downshift, aging test, etc.)</div>
+  <table class="tight"><tr><th style="width:5%">序号</th><th style="width:22%">测试项目 / Test Item</th><th style="width:35%">判定标准 / Standard</th><th style="width:21%">实测结果 / Test Result</th><th style="width:9%">判定</th><th style="width:8%">备注</th></tr><tbody id="funcRows"></tbody></table>
+  <div class="template-row-actions no-print"><button type="button" data-add-row="func">+ 新增测试项目</button></div>
+
+  <div class="band">H&nbsp;&nbsp;缺陷记录 <span>Defect Record</span></div>
+  <table class="tight"><tr><th style="width:5%">序号</th><th style="width:13%">缺陷部位<br>Location</th><th style="width:22%">缺陷描述<br>Description</th><th style="width:9%">等级<br>Class</th><th style="width:7%">数量<br>Qty</th><th style="width:12%">照片编号<br>Photo Ref</th><th style="width:18%">解决方案<br>Solution</th><th style="width:14%">整改状态<br>Status</th></tr><tbody id="defectRows"></tbody></table>
+  <div class="template-row-actions no-print"><button type="button" data-add-row="defect">+ 新增缺陷记录</button></div>
+  <div class="band">I&nbsp;&nbsp;缺陷照片展示 <span>Defect Photos</span></div><div class="photo-grid" id="defectPhotos"></div>
+
+  <div class="band">J&nbsp;&nbsp;检验结果汇总 <span>Inspection Result Summary</span></div>
+  <div class="result-box"><div><b>最终判定 / Final Result</b><br><label><input type="radio" name="finalResult"> PASS 合格</label> <label><input type="radio" name="finalResult"> FAIL 不合格</label> <label><input type="radio" name="finalResult"> PENDING 待定（需复检）</label></div><div><b>检验总结 / Summary</b><br><input data-k="summary" style="width:100%;border:0;border-bottom:1px solid #bdc7d0"></div></div>
+  <table class="tight"><tr><td class="subhead">CR 严重缺陷 / Critical</td><td class="checks">数量: ____ &nbsp; Ac/Re: __/__ &nbsp; 判定: <label><input type="radio" name="summaryCR">P</label> <label><input type="radio" name="summaryCR">F</label></td><td class="subhead">MA 主要缺陷 / Major</td><td class="checks">数量: ____ &nbsp; Ac/Re: __/__ &nbsp; 判定: <label><input type="radio" name="summaryMA">P</label> <label><input type="radio" name="summaryMA">F</label></td></tr><tr><td class="subhead">MI 次要缺陷 / Minor</td><td class="checks">数量: ____ &nbsp; Ac/Re: __/__ &nbsp; 判定: <label><input type="radio" name="summaryMI">P</label> <label><input type="radio" name="summaryMI">F</label></td><td class="subhead">合格率 / Pass Rate</td><td>______ %</td></tr></table>
+  <div class="desc"><b>后续处理 / Follow-up</b>&nbsp; □ 直接放行 Release &nbsp;&nbsp; □ 返工后放行 Rework &amp; Release &nbsp;&nbsp; □ 退货 Return &nbsp;&nbsp; □ 让步接收 Concession &nbsp;&nbsp; □ 复检 Re-inspection</div>
+
+  <div class="band">K&nbsp;&nbsp;签名确认 <span>Signature &amp; Confirmation</span></div><table class="sign tight"><tr><td class="subhead">检验员 / Inspector</td><td>签名: ____________________ &nbsp; 日期: __________</td><td class="subhead">供应商代表 / Supplier Rep.</td><td>签名: ____________________</td></tr><tr><td class="subhead">品质主管 / QC Manager</td><td>签名: ____________________ &nbsp; 日期: __________</td><td class="subhead">审核人 / Auditor</td><td>签名: ____________________</td></tr></table>
+  <div class="footer-note">备注 / Remarks：1. 依据 ANSI/ASQC Z1.4-2008 执行抽样。 2. CR=严重（安全/功能），MA=主要（外观/尺寸），MI=次要（轻微外观）。 3. 标准详细尺寸参照附件实测数据（ororo 尺寸表），功能测试参照发热模组规格书。</div>
+
+  <div class="mobile-photo-bar no-print"><strong>📱 手机拍照自动入框</strong><span>扫码后按照片类别实时回填到本报告</span><span class="actions"><button type="button" id="ororoPhotoQR">二维码</button><button type="button" id="ororoPhotoOpen">获取链接 / 打开</button><button type="button" id="ororoPhotoSync">↻ 同步</button></span></div>
+  <div class="mobile-qr no-print" id="ororoQrBox" style="display:none"><div id="ororoQr"></div><div class="mobile-qr-tip">用手机钉钉或微信扫一扫，照片会按所选类别进入对应图片框并同步 NAS。</div></div>
+  <section class="photo-section"><div class="band">L1&nbsp;&nbsp;仓储图片 <span>Warehouse Photos</span></div><div class="photo-grid" id="warehousePhotos"></div></section>
+  <section class="photo-section"><div class="band">L2&nbsp;&nbsp;外观图片 <span>Appearance Photos</span></div><div class="photo-grid" id="appearancePhotos"></div></section>
+  <section class="photo-section"><div class="band">L3&nbsp;&nbsp;包装尺寸图片 <span>Packaging &amp; Size Photos</span></div><div class="photo-grid" id="packagingPhotos"></div></section>
+  <section class="photo-section"><div class="band">L4&nbsp;&nbsp;功能测试图片 <span>Functional Test Photos</span></div><div class="photo-grid" id="functionalPhotos"></div></section>
+  <section class="photo-section"><div class="band">L5&nbsp;&nbsp;其他图片 <span>Other Photos</span></div><div class="photo-grid" id="otherPhotos"></div></section>
+</main>
+<script>
+const fabric=[['面料成分 / Fabric Composition','与确认样/技术资料一致 / Consistent with approved sample & tech pack'],['面料色差 / Color Shade','同件≥4级；件与件≥3-4级(AATCC) / Within garment ≥Grade 4; between ≥Grade 3-4'],['对条对格 / Pattern Matching','主要部位偏差≤0.3cm / Major parts deviation ≤0.3cm'],['面料疵点 / Fabric Defects','无断纱、破洞、抽丝、色斑、油污 / No broken yarn, holes, snagging, stains'],['克重/厚度 / Fabric Weight','与确认样一致(±5%) / Consistent with approved sample (±5%)'],['手感/光泽 / Hand Feel & Luster','与确认样一致 / Consistent with approved sample'],['印花/绣花 / Print/Embroidery','图案清晰、位置准确、无脱线错位 / Clear pattern, correct position, no loose threads'],['整体外观 / Overall Appearance','平整、对称、无褶皱扭曲 / Smooth, symmetrical, no wrinkles'],['熨烫/定型 / Ironing & Pressing','熨烫平整、无极光烫伤 / Well pressed, no shine marks or scorching'],['清洁度 / Cleanliness','无线头、粉笔印、胶渍 / No loose threads, chalk marks, glue residue'],['异味 / Odor','无异常异味 / No abnormal odor']];
+const work=[['缝骨强度 / Seam Strength','无跳针、断线、脱线 / No skipped/broken stitches'],['针距密度 / Stitch Density','平缝≥12针/3cm；包缝≥10针/3cm / Lockstitch≥12/3cm; overlock≥10/3cm'],['止口/缝份 / Seam Allowance','均匀一致、无毛露 / Even, no raw edges exposed'],['对称度 / Symmetry','左右偏差≤0.5cm / L/R deviation ≤0.5cm'],['领子工艺 / Collar','平服、对称、不反翘 / Smooth, symmetrical, no curling'],['袖子工艺 / Sleeve','袖笼圆顺、前后适宜 / Armhole smooth, sleeve set correctly'],['口袋工艺 / Pocket','袋口平服、位准无歪斜 / Flat opening, accurate position'],['门襟/拉链 / Placket & Zipper','门襟平直、拉链顺滑 / Placket straight, zipper smooth'],['下摆/袖口 / Hem & Cuff','折边均匀、无扭曲 / Even hem, no distortion'],['加固/线色/内部整洁 / Reinforce/Thread/Internal','受力加固、线色匹配、内部整洁 / Reinforced, thread matched, clean inside']];
+const trims=[['拉链 / Zipper','品牌型号正确、顺滑无卡顿 / Correct brand/model, smooth operation'],['拉链方向 / Zipper Direction','男装左插右拉 / 女装右插左拉 / Men’s left→right; Women’s right→left'],['纽扣/四合扣 / Buttons/Snaps','颜色匹配、牢固、开合顺畅 / Color matched, secure, smooth'],['魔术贴 / Hook & Loop','粘合力良好、无脱胶 / Good adhesion, no delamination'],['织带/松紧带 / Webbing/Elastic','宽度一致、弹性适中 / Consistent width, proper elasticity'],['绣花尺寸 / Embroidery Size','参照《ororo外工单》 / Refer to ororo External Work Order'],['主标/洗水标 / Main/Care Label','内容正确、位置准确 / Correct content, accurate position'],['尺码标/吊牌 / Size/Hang Tag','尺码正确、信息完整 / Correct size, complete info'],['电池口袋/线槽 / Battery Pocket','位置准确、线槽隐藏 / Correct position, wire channel hidden'],['充电接口 / Charging Port','连接牢固、防水盖完好 / Secure connection, waterproof cover intact'],['胶袋/包装 / Polybag/Packaging','尺寸合适、封口平整无破损 / Proper size, sealed flat, no damage'],['吊牌/条码/洗水标 / Tag/Barcode/Label','信息正确、可扫描、合规 / Correct info, scannable, compliant']];
+const funcs=[['开机/关机 / Power On/Off','长按2秒响应正常 / Hold 2s, responsive'],['预热与档位 / Preheat & Levels','预热5min→自动中档；低→高→中循环 / Preheat 5min→auto medium; Low→High→Medium cycle'],['灯光指示 / LED Indicator','各档灯光颜色正确；8秒后变暗 / Correct LED colors; dims after 8s'],['加热效果 / Heating Performance','各档位温度达标 / All levels meet temp spec'],['老化测试 / Aging Test','2PCS×15min，每2min检查 / 2 PCS×15min, check every 2min (battery only)'],['电池/接口 / Battery & Connector','充电正常、接口牢固 / Charges OK, secure']];
+function rows(arr,id,kind){document.getElementById(id).innerHTML=arr.map((r,i)=>`<tr><td class="center">${i+1}</td><td>${r[0]}</td><td>${r[1]}</td>${kind==='func'?'<td><input style="width:100%;border:0;border-bottom:1px solid #bdc7d0"></td><td class="checks">□P □F</td><td></td>':'<td class="checks">□P □F □N/A</td><td></td><td class="checks">□CR □MA □MI</td>'}</tr>`).join('')}
+function blankRows(id,count,cols){document.getElementById(id).innerHTML=Array.from({length:count},(_,i)=>`<tr><td class="center">${i+1}</td>${Array.from({length:cols-1},()=>'<td><input style="width:100%;border:0;border-bottom:1px solid #bdc7d0"></td>').join('')}</tr>`).join('')}
+function photos(id,n=4){document.getElementById(id).innerHTML=Array.from({length:n},()=>`<div class="photo"><div class="inner"><span class="icon">▧</span>[粘贴照片 / Paste Photo]</div></div>`).join('')}
+rows(fabric,'fabricRows');rows(work,'workRows');rows(trims,'trimRows');rows(funcs,'funcRows','func');blankRows('defectRows',4,8);['defectPhotos','warehousePhotos','appearancePhotos','packagingPhotos','functionalPhotos','otherPhotos'].forEach(id=>photos(id));
+function collect(){const data={template_code:'ororo',template_version:'1.0',basic:{}};document.querySelectorAll('[data-k]').forEach(el=>data.basic[el.dataset.k]=el.value||'');return data}
+function applyData(data){if(!data)return;const b=data.basic||data.ororo||{};document.querySelectorAll('[data-k]').forEach(el=>{if(Object.prototype.hasOwnProperty.call(b,el.dataset.k))el.value=b[el.dataset.k]})}
+function buildReport(data){document.body.classList.add('report-view');document.querySelectorAll('input,textarea,select').forEach(el=>{el.disabled=true});return true}
+function blankData(){return {template_code:'ororo',template_version:'1.0',basic:{brand:'ororo',reference:'ororo 工单 / Tech Pack / Size Chart'}}}
+window.collect=collect;window.applyData=applyData;window.buildReport=buildReport;window.blankData=blankData;
+document.getElementById('viewBtn').onclick=()=>buildReport(collect());document.getElementById('editBtn').onclick=()=>{document.querySelectorAll('input,textarea,select').forEach(el=>el.disabled=false)};
+</script>
+<script>
+/* Ororo 模板只增加组件桥接与照片交互；纸面字段、章节和横向版式均保持原模板。 */
+const OroroStreamlit = (() => {
+  const RENDER = 'streamlit:render', events = new EventTarget(); let ready = false, lastHeight = 0;
+  const send = (type, data={}) => window.parent.postMessage({isStreamlitMessage:true, type, ...data}, '*');
+  return {
+    events,
+    ready(){ if (!ready) { window.addEventListener('message', e => { const d=e.data; if(d&&d.type===RENDER) events.dispatchEvent(new CustomEvent(RENDER,{detail:{args:d.args||{},disabled:!!d.disabled}})); }); ready=true; } send('streamlit:componentReady',{apiVersion:1}); },
+    value(value){ send('streamlit:setComponentValue',{value,dataType:'json'}); },
+    height(){ const h=Math.max(document.documentElement.scrollHeight,640); if(h!==lastHeight){lastHeight=h;send('streamlit:setFrameHeight',{height:h});} }
+  };
+})();
+
+const PHOTO_SECTIONS = {defectPhotos:'defect', warehousePhotos:'warehouse', appearancePhotos:'appearance', packagingPhotos:'packaging', functionalPhotos:'functional', otherPhotos:'other'};
+let ororoArgs = {}, ororoLocked = false, ororoPhotos = {};
+let ororoRows = {};
+const ORORO_ROW_DEFAULTS = {
+  fabric: fabric.map((r,i)=>({id:`fabric_${i}`,item:r[0],standard:r[1],result:'',class:''})),
+  work: work.map((r,i)=>({id:`work_${i}`,item:r[0],standard:r[1],result:'',class:''})),
+  trim: trims.map((r,i)=>({id:`trim_${i}`,item:r[0],standard:r[1],result:'',class:''})),
+  func: funcs.map((r,i)=>({id:`func_${i}`,item:r[0],standard:r[1],actual:'',result:'',remarks:''})),
+  defect: Array.from({length:4},(_,i)=>({id:`defect_${i}`,location:'',description:'',class:'',qty:'',photoRef:'',solution:'',status:''}))
+};
+const esc = value => String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+const cloneRows = rows => JSON.parse(JSON.stringify(rows));
+function rowInput(section,row,key){ return `<input data-row-field="${key}" data-field="ororo_${section}_${row.id}_${key}" value="${esc(row[key])}" style="width:100%;border:0;border-bottom:1px solid #bdc7d0">`; }
+function rowChoices(section,row,key,choices){ return choices.map(choice=>`<label><input type="radio" name="ororo_${section}_${row.id}_${key}" value="${choice}" data-row-choice="${key}" data-field="ororo_${section}_${row.id}_${key}_${choice}" ${row[key]===choice?'checked':''}>${choice}</label>`).join(' '); }
+function persistRowChange(){ if(!ororoLocked) OroroStreamlit.value({type:'save_draft',data:collectOroro(),reason:'ororo_row_change'}); }
+function removeRow(section,id){ ororoRows=collectOroroRows(); ororoRows[section]=(ororoRows[section]||[]).filter(row=>row.id!==id); renderOroroRows(); persistRowChange(); }
+function renderOroroRows(){
+  const tableMap={fabric:'fabricRows',work:'workRows',trim:'trimRows',func:'funcRows',defect:'defectRows'};
+  Object.entries(tableMap).forEach(([section,id])=>{
+    const target=document.getElementById(id); if(!target) return;
+    target.innerHTML=(ororoRows[section]||[]).map((row,index)=>{
+      const remove=`<button type="button" class="row-remove no-print" data-remove-row="${section}" data-row-id="${row.id}" title="删除此项目">×</button>`;
+      if(section==='defect') return `<tr data-ororo-row="${section}" data-row-id="${row.id}"><td class="center">${index+1}</td><td>${rowInput(section,row,'location')}</td><td>${rowInput(section,row,'description')}</td><td>${rowInput(section,row,'class')}</td><td>${rowInput(section,row,'qty')}</td><td>${rowInput(section,row,'photoRef')}</td><td>${rowInput(section,row,'solution')}</td><td>${rowInput(section,row,'status')}${remove}</td></tr>`;
+      const editable=String(row.id).startsWith('new_');
+      const item=editable?rowInput(section,row,'item'):esc(row.item);
+      const standard=editable?rowInput(section,row,'standard'):esc(row.standard);
+      if(section==='func') return `<tr data-ororo-row="${section}" data-row-id="${row.id}"><td class="center">${index+1}</td><td>${item}</td><td>${standard}</td><td>${rowInput(section,row,'actual')}</td><td class="checks">${rowChoices(section,row,'result',['P','F'])}</td><td>${rowInput(section,row,'remarks')}${remove}</td></tr>`;
+      return `<tr data-ororo-row="${section}" data-row-id="${row.id}"><td class="center">${index+1}</td><td>${item}</td><td>${standard}</td><td class="checks">${rowChoices(section,row,'result',['P','F','N/A'])}</td><td>${editable?rowInput(section,row,'defect'):''}</td><td class="checks">${rowChoices(section,row,'class',['CR','MA','MI'])} ${remove}</td></tr>`;
+    }).join('');
+  });
+  document.querySelectorAll('[data-remove-row]').forEach(btn=>btn.onclick=()=>removeRow(btn.dataset.removeRow,btn.dataset.rowId));
+  setEditability(ororoLocked);
+}
+function collectOroroRows(){
+  const next=cloneRows(ororoRows);
+  document.querySelectorAll('[data-ororo-row]').forEach(tr=>{
+    const section=tr.dataset.ororoRow, id=tr.dataset.rowId, row=(next[section]||[]).find(item=>item.id===id); if(!row) return;
+    tr.querySelectorAll('[data-row-field]').forEach(input=>row[input.dataset.rowField]=input.value||'');
+    tr.querySelectorAll('[data-row-choice]').forEach(input=>{ if(input.checked) row[input.dataset.rowChoice]=input.value; });
+  });
+  return next;
+}
+function addOroroRow(section){
+  ororoRows=collectOroroRows();
+  const id=`new_${section}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+  const blank=section==='defect'?{id,location:'',description:'',class:'',qty:'',photoRef:'',solution:'',status:''}:section==='func'?{id,item:'',standard:'',actual:'',result:'',remarks:''}:{id,item:'',standard:'',result:'',class:'',defect:''};
+  (ororoRows[section] ||= []).push(blank); renderOroroRows(); persistRowChange();
+}
+document.querySelectorAll('[data-add-row]').forEach(btn=>btn.onclick=()=>addOroroRow(btn.dataset.addRow));
+const photoCfg = () => ororoArgs.photo || {};
+function _hostOf(url){ try{return new URL(url).hostname||'';}catch(_){return '';} }
+function _isLocalHost(host){ const h=(host||'').toLowerCase(); return !h||h==='localhost'||h==='127.0.0.1'||h==='0.0.0.0'; }
+function _isPrivateHost(host){ const h=(host||'').toLowerCase(); return _isLocalHost(h)||h.endsWith('.local')||h.endsWith('.lan')||/^10\./.test(h)||/^192\.168\./.test(h)||/^172\.(1[6-9]|2\d|3[0-1])\./.test(h); }
+function photoBase(){ const injected=(photoCfg().api_base||'').replace(/\/$/,''); const current=(location.origin||'').replace(/\/$/,''); if(!injected)return current; const injectedHost=_hostOf(injected),currentHost=_hostOf(current); if(current&&currentHost&&injectedHost&&currentHost!==injectedHost&&_isPrivateHost(injectedHost))return current; return injected||current; }
+const photoToken = () => photoCfg().token || '';
+function withPhotoToken(url){ const token=photoToken(); return token ? `${url}${url.includes('?')?'&':'?'}token=${encodeURIComponent(token)}` : url; }
+const reportKey = () => photoCfg().report_key || 'unknown';
+const photoUser = () => photoCfg().created_by || '';
+const photoUrl = item => item.src || item.url || (item.photo_id != null ? `${photoBase()}/api/photo/${item.photo_id}` : '');
+function fieldKey(el, index) { if (!el.dataset.field) el.dataset.field = `field_${index}`; return el.dataset.field; }
+function assignFieldKeys() { [...document.querySelectorAll('input,textarea,select')].forEach(fieldKey); }
+function setEditability(locked) {
+  ororoLocked = !!locked;
+  document.querySelectorAll('input,textarea,select').forEach(el => el.disabled = ororoLocked);
+  document.querySelectorAll('.photo-upload,.photo-remove,.row-remove,.template-row-actions,.mobile-photo-bar,.mobile-qr').forEach(el => el.style.display = ororoLocked ? 'none' : '');
+  document.querySelectorAll('.photo-placeholder').forEach(el => el.style.display = ororoLocked ? 'block' : 'none');
+  ['ororoSave','ororoSubmit'].forEach(id => document.getElementById(id).disabled = ororoLocked);
+}
+function renderPhotos() {
+  Object.entries(PHOTO_SECTIONS).forEach(([gridId, category]) => {
+    const grid = document.getElementById(gridId); if (!grid) return;
+    grid.innerHTML = '';
+    const items = ororoPhotos[category] || [];
+    for (let n=0; n<4; n++) {
+      const item=items[n], slot=document.createElement('div'); slot.className='photo-slot';
+      const card=document.createElement('div'); card.className='photo';
+      if(item){
+        const src=photoUrl(item); card.innerHTML=`<div class="inner">${src ? `<img src="${src}" alt="照片 ${n+1}" style="width:100%;height:100%;object-fit:cover">` : '<span class="icon">▧</span>'}<button type="button" class="photo-remove" style="margin-top:3px">删除</button></div>`;
+        card.querySelector('.photo-remove').onclick=async e=>{e.stopPropagation();if(item.photo_id!=null&&!(await deletePhoto(item.photo_id)))return;ororoPhotos[category]=items.filter((_,index)=>index!==n);renderPhotos();};
+        card.onclick=()=>{if(src)window.open(src,'_blank');};
+      }else{
+        card.innerHTML='<div class="inner"><span class="photo-placeholder">□ / Paste Photo</span><button type="button" class="photo-upload"><span class="icon">▧</span>上传照片</button></div>';
+        card.querySelector('.photo-upload').onclick=()=>choosePhoto(category);
+      }
+      const desc=document.createElement('div'); desc.className='photo-desc'; desc.innerHTML=`描述 / Description: <input data-field="photo_desc_${category}_${n}" data-photo-desc="${category}_${n}">`;
+      slot.append(card,desc); grid.appendChild(slot);
+    }
+  });
+  setEditability(ororoLocked); OroroStreamlit.height();
+}
+function choosePhoto(category) { if (ororoLocked || reportKey()==='unknown') return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.onchange=async()=>{ const file=input.files&&input.files[0]; if(!file)return; const fd=new FormData(); fd.append('file',file,file.name||'photo.jpg'); fd.append('report_key',reportKey()); fd.append('category',category); fd.append('created_by',photoUser()); try { const r=await fetch(withPhotoToken(`${photoBase()}/api/photo/upload`),{method:'POST',body:fd}); const j=await r.json(); if(!r.ok||!j.ok) throw new Error(j.msg||`HTTP ${r.status}`||'上传失败'); (ororoPhotos[category] ||= []).push({photo_id:j.photo_id,url:j.url}); renderPhotos(); OroroStreamlit.value({type:'save_draft',data:collectOroro(),reason:'photo_upload'}); } catch(e) { alert(`照片上传失败：${e.message||e}`); } }; input.click(); }
+async function deletePhoto(pid) { try { const r=await fetch(`${photoBase()}/api/photo/${pid}?token=${encodeURIComponent(photoToken())}&by=${encodeURIComponent(photoUser())}`,{method:'DELETE'}); const j=await r.json(); if(j.ok)return true; alert(`照片删除失败：${j.msg||'NAS 未确认'}`); } catch(e) { alert('照片删除失败，请检查网络或 NAS'); } return false; }
+const photoSignature = photos => Object.entries(photos||{}).sort().map(([category,items])=>`${category}:${(items||[]).map(item=>item.photo_id||item.url||'').join(',')}`).join('|');
+async function mergeServerPhotos() { if (reportKey()==='unknown') return; try { const before=photoSignature(ororoPhotos); const r=await fetch(`${photoBase()}/api/photo/list?report_key=${encodeURIComponent(reportKey())}&token=${encodeURIComponent(photoToken())}`); const j=await r.json(); if(!j.ok)return; const next={}; (j.photos||[]).forEach(p=>{(next[p.category] ||= []).push({photo_id:p.id,url:p.url,caption:p.caption||''});}); ororoPhotos={...ororoPhotos,...next}; renderPhotos(); if(photoSignature(ororoPhotos)!==before && !ororoLocked) OroroStreamlit.value({type:'save_draft',data:collectOroro(),reason:'mobile_photo_sync'}); } catch(e) { console.warn('照片列表读取失败',e); } }
+function ororoCaptureUrl(){ const rid=ororoArgs.report_id || photoCfg().report_id; const key=reportKey(); if(!key || key==='unknown') return null; const base=rid?`${photoBase()}/capture?rid=${encodeURIComponent(rid)}`:`${photoBase()}/capture?key=${encodeURIComponent(key)}`; return `${base}&mode=new`; }
+document.getElementById('ororoPhotoOpen').onclick=()=>{const url=ororoCaptureUrl(); if(!url){alert('请先保存草稿后再打开手机拍照');return;} window.open(url,'_blank');};
+document.getElementById('ororoPhotoSync').onclick=()=>mergeServerPhotos();
+document.getElementById('ororoPhotoQR').onclick=()=>{const url=ororoCaptureUrl(), box=document.getElementById('ororoQrBox'), qr=document.getElementById('ororoQr'); if(!url){alert('请先保存草稿后再生成二维码');return;} box.style.display=box.style.display==='none'?'block':'none'; if(box.style.display==='none')return; const render=()=>{qr.innerHTML=''; new QRCode(qr,{text:url,width:168,height:168});}; if(typeof QRCode==='undefined'){const script=document.createElement('script');script.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';script.onload=render;script.onerror=()=>{qr.textContent='二维码加载失败，请使用“获取链接 / 打开”。';};document.head.appendChild(script);}else render();};
+window.setInterval(()=>{if(!ororoLocked && reportKey()!=='unknown') mergeServerPhotos();},1500);
+function collectOroro() {
+  const basic={}; document.querySelectorAll('[data-k]').forEach(el=>basic[el.dataset.k]=el.type==='checkbox'||el.type==='radio'?!!el.checked:(el.value||''));
+  const fields={}; document.querySelectorAll('input,textarea,select').forEach((el,i)=>{ const key=fieldKey(el,i); fields[key]=el.type==='checkbox'||el.type==='radio'?!!el.checked:(el.value||''); });
+  basic.product = basic.description || basic.model || 'ororo 产品'; basic.title = [basic.brand||'ororo',basic.po,basic.description].filter(Boolean).join(' · '); basic.productMode='new';
+  return {template_code:'ororo',template_version:'1.0',repno:ororoArgs.report_no || ((ororoArgs.data||{}).repno || ''),basic,fields,galleries:ororoPhotos,ororo_rows:collectOroroRows()};
+}
+function applyOroro(data) {
+  const payload=data||{}, basic=payload.basic||{}; ororoRows=payload.ororo_rows ? cloneRows(payload.ororo_rows) : cloneRows(ORORO_ROW_DEFAULTS); renderOroroRows(); document.querySelectorAll('[data-k]').forEach(el=>{if(Object.prototype.hasOwnProperty.call(basic,el.dataset.k)){if(el.type==='checkbox'||el.type==='radio')el.checked=!!basic[el.dataset.k];else el.value=basic[el.dataset.k]||'';}});
+  ororoPhotos=payload.galleries||{}; renderPhotos();
+  document.querySelectorAll('input,textarea,select').forEach((el,i)=>{const v=(payload.fields||{})[fieldKey(el,i)];if(v!==undefined){if(el.type==='checkbox'||el.type==='radio')el.checked=!!v;else el.value=v;}});
+}
+function buildOroroReport(data) { applyOroro(data); document.body.classList.add('report-view'); setEditability(true); return true; }
+window.collect=collectOroro; window.applyData=applyOroro; window.buildReport=buildOroroReport; window.blankData=()=>({template_code:'ororo',template_version:'1.0',basic:{brand:'ororo',reference:'ororo 工单 / Tech Pack / Size Chart',productMode:'new'}});
+document.getElementById('ororoSave').onclick=()=>OroroStreamlit.value({type:'save_draft',data:collectOroro()});
+document.getElementById('ororoSubmit').onclick=()=>OroroStreamlit.value({type:'submit',data:collectOroro()});
+document.getElementById('ororoExport').onclick=async()=>{const data=collectOroro(); const keyMatch=String(reportKey()).match(/^r(\d+)$/); const reportId=ororoArgs.report_id || photoCfg().report_id || (keyMatch&&keyMatch[1]); const reportNo=data.repno || ororoArgs.report_no || ((ororoArgs.data||{}).repno||''); if(!reportId||!reportNo){alert('未读取到已保存报告编号，请刷新本页后再导出 PDF');return;} data.repno=reportNo; try{const r=await fetch(`${photoBase()}/api/export-pdf`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,report_id:Number(reportId),report_no:reportNo})});if(!r.ok)throw new Error((await r.json()).msg||'导出失败');const blob=await r.blob(),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${reportNo}.pdf`;a.click();URL.revokeObjectURL(a.href);}catch(e){alert(`PDF 导出失败：${e.message||e}`);}};
+document.getElementById('viewBtn').onclick=()=>window.print(); document.getElementById('editBtn').onclick=()=>setEditability(false);
+assignFieldKeys(); OroroStreamlit.ready(); OroroStreamlit.events.addEventListener('streamlit:render',e=>{const raw=e.detail.args||{}; ororoArgs=(raw&&raw.args&&typeof raw.args==='object')?raw.args:raw; document.body.dataset.qmsReportId=ororoArgs.report_id||photoCfg().report_id||''; document.body.dataset.qmsReportNo=ororoArgs.report_no||((ororoArgs.data||{}).repno||''); document.body.classList.toggle('report-view',ororoArgs.mode==='view'); applyOroro(ororoArgs.data||window.blankData()); setEditability(ororoArgs.mode==='view'||!!ororoArgs.locked); mergeServerPhotos(); OroroStreamlit.height();}); new ResizeObserver(()=>OroroStreamlit.height()).observe(document.body);
+</script>
+</body>
+</html>

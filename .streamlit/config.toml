@@ -1,0 +1,23 @@
+[server]
+# 文件上传大小限制 (MB)，默认 200，最大值 2000
+maxUploadSize = 2000
+
+# 防止因大文件上传导致超时
+maxMessageSize = 2000
+
+# 禁用文件监听，避免启动时 import watchdog 触发 macOS 文件系统死锁
+fileWatcherType = "none"
+
+[runner]
+# 跳过魔法命令检查，避免误报
+fastReruns = true
+
+# ===== 统一主题（解决跨设备/浏览器默认红色主按钮问题）=====
+# Streamlit 默认 primaryColor 为红色(#FF4B4B)，导致所有 type="primary" 按钮
+# （提交/保存/确认出库等）显示为红色。此处统一为品牌蓝，保证 Mac/Win/公网一致。
+[theme]
+primaryColor = "#2563eb"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F1F5F9"
+textColor = "#1E293B"
+font = "sans serif"

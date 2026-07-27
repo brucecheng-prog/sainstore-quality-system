@@ -1,0 +1,156 @@
+/* QS-UI v2.0 设计令牌 —— 全站唯一来源
+ * 规范令牌 --qs-* 为权威值；旧命名空间 --qms-* / --wb-* / --rp-* 作为兼容别名，
+ * 过渡期保留，随页面迁移逐步删除。刻意保留的辅助色（如报告页紫色）也在此定义。
+ */
+:root {
+  /* ===== 规范令牌（权威） ===== */
+  --qs-primary: #2563eb;
+  --qs-primary-hover: #1d4ed8;
+  --qs-success: #16a34a;
+  --qs-success-hover: #15803d;
+  --qs-danger: #dc2626;
+  --qs-danger-hover: #b91c1c;
+  --qs-warning: #ea580c;
+  --qs-warning-hover: #c2410c;
+  --qs-purple: #7C3AED;
+  --qs-purple-hover: #6d28d9;
+  --qs-ink: #1e293b;
+  --qs-sub: #64748b;
+  --qs-muted: var(--qs-sub);
+  --qs-line: #e2e8f0;
+  --qs-bg-soft: #f8fafc;
+  --qs-radius: 12px;
+
+  /* ===== 状态语义色（背景/边框配对，F2 令牌化） ===== */
+  --qs-info: #0ea5e9;
+  --qs-info-bg: #E0F2FE;
+  --qs-info-border: #7DD3FC;
+  --qs-success-bg: #F0FDF4;
+  --qs-success-border: #86EFAC;
+  --qs-warning-bg: #FFFBEB;
+  --qs-warning-border: #FCD34D;
+  --qs-danger-bg: #FEF2F2;
+  --qs-danger-border: #F4B7BB;
+  --qs-neutral-bg: #F1F5F9;
+  --qs-neutral-border: #E2E8F0;
+  --qs-neutral-tx: #475569;
+  --qs-amber-tx: #9A6700;
+  --qs-green-tx: #116149;
+  --qs-red-tx: #A12B34;
+  --qs-border-hover: #8FB4E8;
+  --qs-white: #ffffff;
+  --qs-login-bg: #0F2742;
+
+  /* ===== QMS 兼容别名（修正旧绿/红/橙偏差） ===== */
+  --qms-navy: #102a43;
+  --qms-blue: var(--qs-primary);
+  --qms-blue-soft: #eff6ff;
+  --qms-green: var(--qs-success);
+  --qms-amber: var(--qs-warning);
+  --qms-red: var(--qs-danger);
+  --qms-ink: var(--qs-ink);
+  --qms-muted: var(--qs-sub);
+  --qms-line: var(--qs-line);
+  --qms-surface: #ffffff;
+  --qms-canvas: var(--qs-bg-soft);
+  --qms-radius: var(--qs-radius);
+  --qms-radius-sm: 8px;
+  --qms-shadow: 0 4px 14px rgba(16, 42, 67, .06);
+  --qms-space-1: 4px;
+  --qms-space-2: 8px;
+  --qms-space-3: 12px;
+  --qms-space-4: 16px;
+  --qms-space-5: 24px;
+
+  /* ===== WB 兼容别名（修正旧品牌蓝 #2065d1 偏差） ===== */
+  --wb-ink: var(--qs-ink);
+  --wb-muted: var(--qs-sub);
+  --wb-line: var(--qs-line);
+  --wb-bg: var(--qs-bg-soft);
+  --wb-blue: var(--qs-primary);
+  --wb-green: var(--qs-success);
+  --wb-amber: var(--qs-warning);
+  --wb-red: var(--qs-danger);
+
+  /* ===== RP 兼容别名（报告页；紫色为刻意保留的辅助色） ===== */
+  --rp-bg: var(--qs-bg-soft);
+  --rp-card: #FFFFFF;
+  --rp-ink: var(--qs-ink);
+  --rp-ink2: var(--qs-sub);
+  --rp-ink3: #9A9A9A;
+  --rp-line: rgba(0,0,0,.08);
+  --rp-line2: rgba(0,0,0,.14);
+  --rp-blue: var(--qs-primary);
+  --rp-green: var(--qs-success);
+  --rp-red: var(--qs-danger);
+  --rp-amber: var(--qs-warning);
+  --rp-purple: var(--qs-purple);
+  --rp-green-bg: #F0FDF4;
+  --rp-green-tx: #15803D;
+  --rp-red-bg: #FEF2F2;
+  --rp-red-tx: #B91C1C;
+  --rp-amber-bg: #FFFBEB;
+  --rp-amber-tx: #B45309;
+  --rp-blue-bg: #EFF6FF;
+  --rp-blue-tx: #1D4ED8;
+  --rp-purple-bg: #FAF5FF;
+  --rp-purple-tx: #6D28D9;
+  --rp-r-sm: 6px;
+  --rp-r-md: 10px;
+  --rp-r-lg: 14px;
+
+  /* ===== 顶栏 / 命令面板（Redesign 新增） ===== */
+  --qs-topbar-h: 58px;
+  --qs-topbar-bg: rgba(255, 255, 255, 0.86);
+  --qs-topbar-border: rgba(16, 42, 67, 0.08);
+  --qs-topbar-blur: saturate(180%) blur(12px);
+  --qs-shadow-sm: 0 1px 2px rgba(16, 42, 67, .06);
+  --qs-shadow-md: 0 4px 14px rgba(16, 42, 67, .08);
+  --qs-shadow-lg: 0 12px 32px rgba(16, 42, 67, .12);
+  --qs-cmd-bg: #ffffff;
+  --qs-cmd-border: rgba(16, 42, 67, .12);
+  --qs-hover: #f1f5f9;
+  --qs-ring: rgba(37, 99, 235, .24);
+  --qs-muted-2: #94a3b8;
+}
+
+/* ── 报告编辑链接（F17 修复：原 inline style 触发 Streamlit markdown 转义，改为令牌类） ── */
+.qms-edit-link {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 40px; padding: 7px 14px; border-radius: 9px;
+  background: transparent; color: #31333f;
+  border: 1px solid rgba(49,51,63,0.2);
+  font-weight: 600; font-size: 14px; text-decoration: none; cursor: pointer;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: background .15s ease, border-color .15s ease;
+}
+.qms-edit-link:hover { background: #f1f5f9; border-color: #8FB4E8; }
+.qms-edit-link.is-primary { background: #2563eb; color: #fff; border: none; }
+.qms-edit-link.is-primary:hover { background: #1d4ed8; }
+
+/* ── 报告删除按钮（与 .qms-edit-link 等高：min-height 40px + padding 7px 14px） ── */
+.qms-del-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 40px; padding: 7px 14px; border-radius: 9px;
+  background: #fef2f2; color: #dc2626;
+  border: 1.5px solid #fecaca;
+  font-weight: 600; font-size: 13px; text-decoration: none; cursor: pointer;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: background .15s ease, border-color .15s ease;
+}
+.qms-del-btn:hover { background: #fee2e2; border-color: #f87171; }
+
+/* ── 操作区查看按钮（与编辑链接等高） ── */
+.qms-action-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%; min-height: 40px; padding: 7px 14px; border-radius: 9px;
+  background: transparent; color: #31333f;
+  border: 1px solid rgba(49,51,63,0.2);
+  font-weight: 600; font-size: 14px; cursor: pointer;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+  transition: background .15s ease, border-color .15s ease;
+}
+.qms-action-btn:hover { background: #f1f5f9; border-color: #8FB4E8; }

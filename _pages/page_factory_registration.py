@@ -94,40 +94,69 @@ tab1, tab2 = st.tabs(["驻厂登记", "数据记录"])
 with tab1:
     st.subheader("驻厂登记")
     with st.form("fr_form", clear_on_submit=True):
-        c1, c2 = st.columns(2)
-        with c1:
-            register_date = st.date_input("登记日期 *", value=date.today(), key='fr_register_date')
+        # ── 第 1 行：基本信息（左 2 列 + 右 1 列宽）──
+        b1, b2 = st.columns([1.6, 1])
+        with b1:
+            register_date = st.date_input(
+                "登记日期 *", value=date.today(), key='fr_register_date')
             factory_name = st.text_input(
                 "工厂名称 *", key='fr_factory', placeholder="例如：东莞XX工厂")
-            trip_type = st.selectbox("出差类型", TYPE_OPTS, key='fr_trip_type')
-            trip_days = st.number_input(
-                "出差天数", min_value=0, value=0, step=1, key='fr_trip_days')
-        with c2:
+            supplier = st.text_input(
+                "供应商/厂商", key='fr_supplier', placeholder="选填")
+        with b2:
             onsite_staff = st.text_area(
-                "驻厂人员（多人换行）", key='fr_staff', placeholder="张三\n李四")
+                "驻厂人员（多人换行）", key='fr_staff',
+                height=105, placeholder="张三\n李四")
+
+        # ── 第 2 行：订单信息（3 列均等）──
+        r1, r2, r3 = st.columns(3)
+        with r1:
+            trip_type = st.selectbox(
+                "出差类型", TYPE_OPTS, key='fr_trip_type')
+            trip_days = st.number_input(
+                "出差天数", min_value=0, value=0, step=1,
+                key='fr_trip_days')
+        with r2:
             po_no = st.text_area(
-                "PO 单号（多个换行）", key='fr_po', placeholder="PO123\nPO456")
+                "PO 单号（多个换行）", key='fr_po',
+                height=105, placeholder="PO123\nPO456")
+        with r3:
             sku = st.text_area(
-                "SKU（多个换行）", key='fr_sku', placeholder="SKU-A\nSKU-B")
-            inspection_result = st.selectbox("验货结果", ["Pass", "Fail", "待定"], key='fr_inspection_result')
-            product_project = st.text_input("产品/项目", key='fr_product')
+                "SKU（多个换行）", key='fr_sku',
+                height=105, placeholder="SKU-A\nSKU-B")
 
-        c3, c4, c5 = st.columns(3)
-        with c3:
-            is_empty_run = st.selectbox("是否空跑", ["否", "是"], key='fr_empty')
-        with c4:
-            is_recheck = st.selectbox("是否复检", ["否", "是"], key='fr_recheck')
-        with c5:
-            is_delay = st.selectbox("是否交期延误", ["否", "是"], key='fr_delay')
+        # ── 第 3 行：产品与结果（3 列）──
+        s1, s2, s3 = st.columns(3)
+        with s1:
+            product_project = st.text_input(
+                "产品/项目", key='fr_product')
+        with s2:
+            inspection_result = st.selectbox(
+                "验货结果", ["Pass", "Fail", "待定"],
+                key='fr_inspection_result')
 
+        # ── 第 4 行：执行情况（3 列）──
+        e1, e2, e3 = st.columns(3)
+        with e1:
+            is_empty_run = st.selectbox(
+                "是否空跑", ["否", "是"], key='fr_empty')
+        with e2:
+            is_recheck = st.selectbox(
+                "是否复检", ["否", "是"], key='fr_recheck')
+        with e3:
+            is_delay = st.selectbox(
+                "是否交期延误", ["否", "是"], key='fr_delay')
+
+        # ── 条件字段 + 底部大文本 ──
         delay_days = 0
         if is_delay == "是":
             delay_days = st.number_input(
-                "延误天数", min_value=0, value=0, step=1, key='fr_delay_days')
+                "延误天数", min_value=0, value=0, step=1,
+                key='fr_delay_days')
 
         return_reason = st.text_input("退货原因", key='fr_return')
-        purpose = st.text_area("驻厂目的", key='fr_purpose')
-        notes = st.text_area("备注", key='fr_notes')
+        purpose = st.text_area("驻厂目的", key='fr_purpose', height=68)
+        notes = st.text_area("备注", key='fr_notes', height=68)
 
         if st.form_submit_button("提交登记", type="primary", width="stretch"):
             if not factory_name.strip():
@@ -136,6 +165,7 @@ with tab1:
                 ok, msg = add_factory_registration({
                     'register_date': str(register_date),
                     'factory_name': factory_name.strip(),
+                    'supplier': supplier.strip(),
                     'onsite_staff': onsite_staff.strip(),
                     'trip_type': trip_type,
                     'trip_days': int(trip_days),

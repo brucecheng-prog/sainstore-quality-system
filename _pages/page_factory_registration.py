@@ -33,6 +33,42 @@ render_topbar("驻厂登记")
 
 st.title("驻厂登记")
 
+
+# ── 编辑器删除即时落库回调 ──
+# 解决“在编辑器里删了行，刷新后记录又回来”的 bug：
+# 之前删除只记到 session_state 的 deleted_rows，需点“保存修改”才落库；
+# rerun 后 stale 的 deleted_rows 会对新 DataFrame 误删或使记录“复活”。
+# 改为：用户一删除，立刻从 DB 删除并清空删除标记，刷新不再复活。
+def _fr_editor_on_change():
+    sd = st.session_state.get('fr_editor', {})
+    dr = sd.get('deleted_rows', []) if isinstance(sd, dict) else []
+    if not dr:
+        return
+    df_cache = st.session_state.get('_fr_df')
+    if df_cache is None or not hasattr(df_cache, 'iloc'):
+        return
+    for ridx in sorted(dr, reverse=True):
+        try:
+            ridx = int(ridx)
+        except Exception:
+            continue
+        if 0 <= ridx < len(df_cache):
+            try:
+                pk = int(df_cache.iloc[ridx]['id'])
+            except Exception:
+                continue
+            try:
+                delete_factory_registration(pk)
+            except Exception:
+                pass
+    # 清空删除标记，避免 rerun 后 stale 状态误删或记录“复活”
+    try:
+        st.session_state['fr_editor']['deleted_rows'] = []
+    except Exception:
+        st.session_state.pop('fr_editor', None)
+    st.rerun()
+
+
 # 字段顺序（与数据库列一致）
 TEMPLATE_COLS = [
     'register_date', 'factory_name', 'onsite_staff', 'trip_type',
@@ -275,6 +311,8 @@ with tab2:
         }
         _disp = min(50, len(df_fr))
         editor_key = 'fr_editor'
+        # 缓存当前 DataFrame，供删除回调按行索引映射 DB id
+        st.session_state['_fr_df'] = df_fr
         edited = ui_data_editor(
             df_fr,
             key=editor_key,
@@ -284,6 +322,7 @@ with tab2:
             column_order=DISPLAY_COLS,
             hide_index=True,
             height=min(38 * _disp + 40, 760),
+            on_change=_fr_editor_on_change,
         )
 
         b1, b2 = st.columns([1, 3])
@@ -339,11 +378,14 @@ with tab2:
                         st.toast(f"已删除 {len(deleted_rows)} 条（进入回收站）")
 
                     if changes:
+                        # 清空编辑器状态，避免 stale 的 edited/added/deleted
+                        # 在下次 rerun 时被重复应用
+                        st.session_state.pop(editor_key, None)
                         st.rerun()
                 except Exception as e:
                     st.error(f"操作失败：{e}")
         with b2:
-            st.caption("双击单元格编辑 | 勾选行 + Delete 删除（可于『误删找回』还原）| 底部空行新增")
+            st.caption("双击单元格编辑 | 勾选行 + Delete 立即删除（可于『误删找回』还原）| 底部空行新增 | 单元格修改/新增需点『保存修改』")
 
         # ==================== 出差频次统计 ====================
         st.markdown("---")

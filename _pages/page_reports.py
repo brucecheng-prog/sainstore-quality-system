@@ -218,7 +218,8 @@ def _render_permission_panel(user_role):
         )
         st.info(
             "**不需要额外授权**——能登录系统的同事默认都能写报告和上传照片。"
-            "此面板仅用于**限制**某个人为「只读」（viewer），或给同事开放管理员权限。不填也没影响。"
+            "角色范围：检验员可新建和编辑自己的草稿；审核员可审核待审核报告；"
+            "只读只能查看；管理员拥有完整权限。"
         )
         list_roles_fn = getattr(odb, "list_roles", None)
         roles = list_roles_fn() if callable(list_roles_fn) else []
@@ -226,14 +227,14 @@ def _render_permission_panel(user_role):
             for r in roles:
                 st.markdown(f"- **{r['user_name']}** → `{r['role']}`")
         else:
-            st.caption("（暂无受限用户；所有人默认 uploader）")
+            st.caption("（暂无显式角色；已授权用户默认是检验员 uploader）")
         st.markdown("---")
         with st.form("or_role_form", clear_on_submit=True):
-            uname = st.text_input("用户名 / 邮箱",
-     placeholder="如：张三 或 zhangsan@sainstore.com")
+            uname = st.text_input("登录邮箱",
+     placeholder="如：zhangsan@sainstore.com")
             role = st.selectbox(
-    "分配角色", [
-        "uploader", "viewer", "admin"], index=0)
+    "分配角色", ["uploader", "reviewer", "viewer", "admin"], index=0,
+    format_func={"uploader": "检验员", "reviewer": "审核员", "viewer": "只读", "admin": "管理员"}.get)
             if st.form_submit_button("保存角色"):
                 if not uname.strip():
                     st.error("请填写用户名 / 邮箱")
@@ -242,7 +243,7 @@ def _render_permission_panel(user_role):
                     if not callable(set_role_fn):
                         st.error("当前运行环境尚未加载到最新权限接口，请先完成 Win 服务升级后再试。")
                         return
-                    set_role_fn(uname.strip(), role)
+                    set_role_fn(uname.strip().lower(), role)
                     add_audit_fn = getattr(odb, "add_audit", None)
                     if callable(add_audit_fn):
                         add_audit_fn(
@@ -825,11 +826,14 @@ def _build_notify_notice(action_text, notify_ok, notify_msg, notify_label):
 
 
 def _current_user_can_review(report=None):
-    """仅管理员/开发者可审核在线报告（主管权限）。"""
+    """仅管理员、显式审核员或开发者可审核在线报告。"""
     user_name = st.session_state.get("user_name", "")
     if st.session_state.get("is_admin", False):
         return True
     if user_name.endswith("(开发者)"):
+        return True
+    user_email = (st.session_state.get("user_email") or "").strip().lower()
+    if user_email and _or_get_role(user_email) == "reviewer":
         return True
     return False
 
@@ -2162,7 +2166,8 @@ def _online_report_tab():
     _user_email = (st.session_state.get("user_email") or "").strip().lower()
     _sess_admin = bool(st.session_state.get("is_admin", False)) and _authenticated and bool(_user_email)
     _can_admin = _sess_admin
-    user_role = _or_get_role(user_name, is_admin=_can_admin)
+    # 角色必须按登录邮箱匹配，避免同名人员或昵称变化造成越权。
+    user_role = _or_get_role(_user_email or user_name, is_admin=_can_admin)
 
     def _can_review(rpt):
         return _current_user_can_review({"reviewer": rpt.get("reviewer", "")})
@@ -2174,7 +2179,10 @@ def _online_report_tab():
         """当前用户是否为报告创建者（admin 自动视为 owner）。"""
         if _can_admin:
             return True
-        return bool(_authenticated and rep.get("created_by") and rep["created_by"] == created_by)
+        return bool(
+            _authenticated and user_role == "uploader"
+            and rep.get("created_by") and rep["created_by"] == created_by
+        )
 
     def _can_delete_draft(rep):
         """Deletion is authorized twice: before display and before execution."""
@@ -2196,6 +2204,11 @@ def _online_report_tab():
 
     # 工作台「新建报告」通过 query 参数进入在线报告 Tab，并自动创建空白草稿。
     if st.query_params.get("new") == "1" and ss["or_mode"] == "list":
+        if user_role not in ("admin", "uploader"):
+            st.query_params.pop("new", None)
+            st.query_params.pop("or_template", None)
+            _flash("当前角色没有新建报告权限。", "err")
+            st.rerun()
         template_code = st.query_params.get("or_template")
         new_rid, new_no = _or_create_draft(template_code=template_code)
         ss["or_mode"] = "edit"
@@ -2223,9 +2236,13 @@ def _online_report_tab():
     if ss["or_mode"] == "list":
         create_generic, create_ororo, _create_spacer = st.columns([1, 1, 4], gap="small")
         with create_generic:
-            create_generic_clicked = st.button("新建通用报告", type="primary", width="stretch", key="or_create_draft")
+            create_generic_clicked = st.button("新建通用报告", type="primary", width="stretch", key="or_create_draft", disabled=user_role not in ("admin", "uploader"))
         with create_ororo:
-            create_ororo_clicked = st.button("新建 Ororo 专用报告", type="primary", width="stretch", key="or_create_ororo")
+            create_ororo_clicked = st.button("新建 Ororo 专用报告", type="primary", width="stretch", key="or_create_ororo", disabled=user_role not in ("admin", "uploader"))
+        if user_role == "reviewer":
+            st.caption("当前角色：审核员。可查看并审核待审核报告，不能新建或编辑检验报告。")
+        elif user_role == "viewer":
+            st.caption("当前角色：只读。仅可查看报告，不能新建、编辑、审核或删除。")
         if create_generic_clicked or create_ororo_clicked:
             try:
                 template_code = "ororo" if create_ororo_clicked else None

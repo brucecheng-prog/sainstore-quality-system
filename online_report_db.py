@@ -796,19 +796,26 @@ def list_audit(rid):
         conn.close()
 
 
+VALID_REPORT_ROLES = {"admin", "uploader", "reviewer", "viewer"}
+
+
 def get_role(user_name, is_admin=False):
-    """返回角色。管理员会话直接 admin；无记录默认 uploader（避免锁死普通上传员）。"""
+    """返回在线报告角色；管理员会话始终拥有 admin 权限。"""
     if is_admin:
         return "admin"
     conn = get_connection()
     try:
         row = conn.execute("SELECT role FROM online_report_roles WHERE user_name=?", (user_name,)).fetchone()
-        return row["role"] if row else "uploader"
+        role = (row["role"] if row else "uploader").strip().lower()
+        return role if role in VALID_REPORT_ROLES else "viewer"
     finally:
         conn.close()
 
 
 def set_role(user_name, role):
+    role = (role or "").strip().lower()
+    if role not in VALID_REPORT_ROLES:
+        raise ValueError("不支持的在线报告角色")
     conn = get_connection()
     try:
         conn.execute(

@@ -909,7 +909,6 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             register_date TEXT DEFAULT '',
             factory_name TEXT DEFAULT '',
-            supplier TEXT DEFAULT '',
             onsite_staff TEXT DEFAULT '',
             trip_type TEXT DEFAULT '',
             trip_days INTEGER DEFAULT 0,
@@ -921,7 +920,7 @@ def init_db():
             is_delay TEXT DEFAULT '否',
             delay_days INTEGER DEFAULT 0,
             return_reason TEXT DEFAULT '',
-            status TEXT DEFAULT '驻厂中',
+            inspection_result TEXT DEFAULT '待定',
             purpose TEXT DEFAULT '',
             notes TEXT DEFAULT '',
             created_at TEXT DEFAULT (datetime('now','localtime'))
@@ -1170,6 +1169,13 @@ def init_db():
         cursor.execute("ALTER TABLE borrow_records ADD COLUMN usage_result TEXT DEFAULT ''")
     except:
         pass
+
+    # 驻厂登记字段迁移：status → inspection_result，supplier 废弃
+    try:
+        cursor.execute("ALTER TABLE factory_registrations RENAME COLUMN status TO inspection_result")
+    except:
+        pass
+    # supplier 列保留不删（SQLite 旧版不支持 DROP COLUMN），新代码不再读写
 
     # 仅在表为空时插入种子数据
     cursor.execute("SELECT COUNT(*) FROM categories")
@@ -2515,7 +2521,7 @@ def add_factory_registration(data):
         INSERT INTO factory_registrations
         (register_date, factory_name, supplier, onsite_staff, trip_type,
          trip_days, po_no, sku, product_project, is_empty_run,
-         is_recheck, is_delay, delay_days, return_reason, status,
+         is_recheck, is_delay, delay_days, return_reason, inspection_result,
          purpose, notes)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
@@ -2533,7 +2539,7 @@ def add_factory_registration(data):
         data.get('is_delay', '否'),
         int(data.get('delay_days', 0) or 0),
         data.get('return_reason', ''),
-        data.get('status', '驻厂中'),
+        data.get('inspection_result', '待定'),
         data.get('purpose', ''),
         data.get('notes', ''),
     ))
@@ -2551,7 +2557,7 @@ def update_factory_registration(fr_id, data):
             register_date=?, factory_name=?, supplier=?, onsite_staff=?,
             trip_type=?, trip_days=?, po_no=?, sku=?, product_project=?,
             is_empty_run=?, is_recheck=?, is_delay=?, delay_days=?,
-            return_reason=?, status=?, purpose=?, notes=?
+            return_reason=?, inspection_result=?, purpose=?, notes=?
         WHERE id=?
     """, (
         data.get('register_date', ''),
@@ -2568,7 +2574,7 @@ def update_factory_registration(fr_id, data):
         data.get('is_delay', '否'),
         int(data.get('delay_days', 0) or 0),
         data.get('return_reason', ''),
-        data.get('status', '驻厂中'),
+        data.get('inspection_result', '待定'),
         data.get('purpose', ''),
         data.get('notes', ''),
         fr_id,
@@ -2589,7 +2595,7 @@ def delete_factory_registration(fr_id):
     return True, "已移入回收站（可在数据记录的『误删找回』中找回）"
 
 
-def get_factory_registrations(search='', factory='', staff='', status='',
+def get_factory_registrations(search='', factory='', staff='', inspection_result='',
                              trip_type='', date_from='', date_to='',
                              page=1, per_page=2000):
     """查询驻厂登记列表。"""
@@ -2598,14 +2604,14 @@ def get_factory_registrations(search='', factory='', staff='', status='',
     if search:
         conditions.append(
             "(factory_name LIKE ? OR onsite_staff LIKE ? OR po_no LIKE ? "
-            "OR sku LIKE ? OR supplier LIKE ? OR product_project LIKE ?)")
-        params.extend([f'%{search}%'] * 6)
+            "OR sku LIKE ? OR product_project LIKE ?)")
+        params.extend([f'%{search}%'] * 5)
     if factory:
         conditions.append("factory_name = ?"); params.append(factory)
     if staff:
         conditions.append("onsite_staff LIKE ?"); params.append(f'%{staff}%')
-    if status:
-        conditions.append("status = ?"); params.append(status)
+    if inspection_result:
+        conditions.append("inspection_result = ?"); params.append(inspection_result)
     if trip_type:
         conditions.append("trip_type = ?"); params.append(trip_type)
     if date_from:
@@ -2630,9 +2636,9 @@ def get_factory_stats():
     conn = get_connection()
     total = conn.execute("SELECT COUNT(*) FROM factory_registrations").fetchone()[0]
     onsite = conn.execute(
-        "SELECT COUNT(*) FROM factory_registrations WHERE status='驻厂中'").fetchone()[0]
+        "SELECT COUNT(*) FROM factory_registrations WHERE inspection_result='Pass'").fetchone()[0]
     ended = conn.execute(
-        "SELECT COUNT(*) FROM factory_registrations WHERE status='已结束'").fetchone()[0]
+        "SELECT COUNT(*) FROM factory_registrations WHERE inspection_result='Fail'").fetchone()[0]
     empty = conn.execute(
         "SELECT COUNT(*) FROM factory_registrations WHERE is_empty_run='是'").fetchone()[0]
     recheck = conn.execute(

@@ -146,9 +146,9 @@ with tab1:
     with fc1:
         st.metric("🏭 驻厂登记总数", fr_stats['total'])
     with fc2:
-        st.metric("📍 驻厂中", fr_stats['onsite'])
+        st.metric("✅ Pass", fr_stats['onsite'])
     with fc3:
-        st.metric("✅ 已结束", fr_stats['ended'])
+        st.metric("❌ Fail", fr_stats['ended'])
     with fc4:
         st.metric("🚨 空跑次数", fr_stats['empty'])
 

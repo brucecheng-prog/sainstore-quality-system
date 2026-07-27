@@ -35,10 +35,10 @@ st.title("驻厂登记")
 
 # 字段顺序（与数据库列一致）
 TEMPLATE_COLS = [
-    'register_date', 'factory_name', 'supplier', 'onsite_staff', 'trip_type',
+    'register_date', 'factory_name', 'onsite_staff', 'trip_type',
     'trip_days', 'po_no', 'sku', 'product_project', 'is_empty_run',
     'is_recheck', 'is_delay', 'delay_days', 'return_reason',
-    'status', 'purpose', 'notes',
+    'inspection_result', 'purpose', 'notes',
 ]
 DISPLAY_COLS = ['id'] + TEMPLATE_COLS
 TYPE_OPTS = ["验货", "测试", "异常处理", "审厂", "品质会议", "试产跟线", "其他"]
@@ -99,7 +99,6 @@ with tab1:
             register_date = st.date_input("登记日期 *", value=date.today(), key='fr_register_date')
             factory_name = st.text_input(
                 "工厂名称 *", key='fr_factory', placeholder="例如：东莞XX工厂")
-            supplier = st.text_input("供应商/厂商", key='fr_supplier')
             trip_type = st.selectbox("出差类型", TYPE_OPTS, key='fr_trip_type')
             trip_days = st.number_input(
                 "出差天数", min_value=0, value=0, step=1, key='fr_trip_days')
@@ -110,7 +109,7 @@ with tab1:
                 "PO 单号（多个换行）", key='fr_po', placeholder="PO123\nPO456")
             sku = st.text_area(
                 "SKU（多个换行）", key='fr_sku', placeholder="SKU-A\nSKU-B")
-            status = st.selectbox("状态", ["驻厂中", "已结束"], key='fr_status')
+            inspection_result = st.selectbox("验货结果", ["Pass", "Fail", "待定"], key='fr_inspection_result')
             product_project = st.text_input("产品/项目", key='fr_product')
 
         c3, c4, c5 = st.columns(3)
@@ -137,7 +136,6 @@ with tab1:
                 ok, msg = add_factory_registration({
                     'register_date': str(register_date),
                     'factory_name': factory_name.strip(),
-                    'supplier': supplier.strip(),
                     'onsite_staff': onsite_staff.strip(),
                     'trip_type': trip_type,
                     'trip_days': int(trip_days),
@@ -149,7 +147,7 @@ with tab1:
                     'is_delay': is_delay,
                     'delay_days': int(delay_days),
                     'return_reason': return_reason.strip(),
-                    'status': status,
+                    'inspection_result': inspection_result,
                     'purpose': purpose.strip(),
                     'notes': notes.strip(),
                 })
@@ -170,9 +168,9 @@ with tab2:
     with m1:
         st.metric("📋 总登记数", f"{total} 条")
     with m2:
-        st.metric("🟢 驻厂中", f"{stats.get('onsite', 0)} 条")
+        st.metric("✅ Pass", f"{stats.get('onsite', 0)} 条")
     with m3:
-        st.metric("⚪ 已结束", f"{stats.get('ended', 0)} 条")
+        st.metric("❌ Fail", f"{stats.get('ended', 0)} 条")
     with m4:
         st.metric("⚠️ 空跑 / 复检 / 延误",
                    f"{stats.get('empty', 0)} / {stats.get('recheck', 0)} / {stats.get('delay', 0)}")
@@ -187,14 +185,14 @@ with tab2:
     c1, c2, c3, c4 = st.columns([2.4, 1.4, 1.4, 1.4])
     with c1:
         search = st.text_input(
-            "搜索", placeholder="工厂/人员/PO/SKU/供应商",
+            "搜索", placeholder="工厂/人员/PO/SKU",
             label_visibility="collapsed")
     with c2:
         factory_filter = st.selectbox(
             "工厂", ["全部"] + _factories, label_visibility="collapsed")
     with c3:
-        status_filter = st.selectbox(
-            "状态", ["全部", "驻厂中", "已结束"], label_visibility="collapsed")
+        inspection_result_filter = st.selectbox(
+            "验货结果", ["全部", "Pass", "Fail", "待定"], label_visibility="collapsed")
     with c4:
         type_filter = st.selectbox(
             "出差类型", ["全部"] + TYPE_OPTS, label_visibility="collapsed")
@@ -210,7 +208,7 @@ with tab2:
     rows, total = get_factory_registrations(
         search=search,
         factory=factory_filter if factory_filter != "全部" else '',
-        status=status_filter if status_filter != "全部" else '',
+        inspection_result=inspection_result_filter if inspection_result_filter != "全部" else '',
         trip_type=type_filter if type_filter != "全部" else '',
     )
     if only_empty:

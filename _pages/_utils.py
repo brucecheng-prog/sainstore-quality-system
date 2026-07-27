@@ -1365,9 +1365,18 @@ def _current_page_id():
     'multiple elements with the same key' 错误（如 sidebar_logout_bottom 重复）。
     """
     try:
-        from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
+        # Streamlit 1.59+ moved this module to scriptrunner_utils. 旧导入会
+        # 被异常吞掉并永久回退为 app，导致不同渲染上下文共用同一 form key。
+        try:
+            from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_run_ctx
+        except ModuleNotFoundError:
+            from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
         _ctx = get_script_run_ctx()
-        return (_ctx.page_script_name if _ctx else "") or "app"
+        return (
+            getattr(_ctx, "page_script_name", "")
+            or getattr(_ctx, "page_script_hash", "")
+            or "app"
+        )
     except Exception:
         return "app"
 
@@ -1441,9 +1450,12 @@ def render_topbar(page_title=None):
     # 当前页面中文名（调用方传入优先；未传时尝试从 ctx 推断）
     if not page_title:
         try:
-            from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
+            try:
+                from streamlit.runtime.scriptrunner_utils.script_run_context import get_script_run_ctx
+            except ModuleNotFoundError:
+                from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
             _ctx = get_script_run_ctx()
-            _pname = _ctx.page_script_name if _ctx else ""
+            _pname = getattr(_ctx, "page_script_name", "") if _ctx else ""
             page_title = _PAGE_INFO.get(_pname, ("品质系统", ""))[0]
         except Exception:
             page_title = "品质系统"

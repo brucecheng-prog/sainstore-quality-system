@@ -909,6 +909,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             register_date TEXT DEFAULT '',
             factory_name TEXT DEFAULT '',
+            supplier TEXT DEFAULT '',
             onsite_staff TEXT DEFAULT '',
             trip_type TEXT DEFAULT '',
             trip_days INTEGER DEFAULT 0,

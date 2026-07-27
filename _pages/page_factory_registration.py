@@ -94,57 +94,57 @@ tab1, tab2 = st.tabs(["驻厂登记", "数据记录"])
 with tab1:
     st.subheader("驻厂登记")
     with st.form("fr_form", clear_on_submit=True):
-        # ── 第 1 行：基本信息 ──
-        a1, a2, a3 = st.columns(3)
-        with a1:
+        # ── 第 1 行：日期 / 工厂 / 出差类型 ──
+        r1, r2, r3 = st.columns(3)
+        with r1:
             register_date = st.date_input(
                 "登记日期 *", value=date.today(), key='fr_register_date')
-        with a2:
+        with r2:
             factory_name = st.text_input(
                 "工厂名称 *", key='fr_factory',
                 placeholder="例如：东莞XX工厂")
-        with a3:
+        with r3:
+            trip_type = st.selectbox(
+                "出差类型", TYPE_OPTS, key='fr_trip_type')
+
+        # ── 第 2 行：驻厂人员 / PO / SKU（多行）──
+        s1, s2, s3 = st.columns(3)
+        with s1:
             onsite_staff = st.text_area(
                 "驻厂人员（多人换行）", key='fr_staff',
                 height=68, placeholder="张三\n李四")
-
-        # ── 第 2 行：出差与订单 ──
-        b1, b2, b3 = st.columns(3)
-        with b1:
-            trip_type = st.selectbox(
-                "出差类型", TYPE_OPTS, key='fr_trip_type')
-        with b2:
-            trip_days = st.number_input(
-                "出差天数", min_value=0, value=0, step=1,
-                key='fr_trip_days')
-        with b3:
+        with s2:
             po_no = st.text_area(
                 "PO 单号（多个换行）", key='fr_po',
                 height=68, placeholder="PO123\nPO456")
-
-        # ── 第 3 行：产品与结果 ──
-        c1, c2, c3 = st.columns(3)
-        with c1:
+        with s3:
             sku = st.text_area(
                 "SKU（多个换行）", key='fr_sku',
                 height=68, placeholder="SKU-A\nSKU-B")
-        with c2:
+
+        # ── 第 3 行：产品 / 天数 / 验货结果 ──
+        t1, t2, t3 = st.columns(3)
+        with t1:
             product_project = st.text_input(
                 "产品/项目", key='fr_product')
-        with c3:
+        with t2:
+            trip_days = st.number_input(
+                "出差天数", min_value=0, value=0, step=1,
+                key='fr_trip_days')
+        with t3:
             inspection_result = st.selectbox(
                 "验货结果", ["Pass", "Fail", "待定"],
                 key='fr_inspection_result')
 
-        # ── 第 4 行：执行情况 ──
-        d1, d2, d3 = st.columns(3)
-        with d1:
+        # ── 第 4 行：执行情况（不变）──
+        e1, e2, e3 = st.columns(3)
+        with e1:
             is_empty_run = st.selectbox(
                 "是否空跑", ["否", "是"], key='fr_empty')
-        with d2:
+        with e2:
             is_recheck = st.selectbox(
                 "是否复检", ["否", "是"], key='fr_recheck')
-        with d3:
+        with e3:
             is_delay = st.selectbox(
                 "是否交期延误", ["否", "是"], key='fr_delay')
 

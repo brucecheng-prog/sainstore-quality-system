@@ -256,8 +256,22 @@ with tab2:
 
         col_config = {
             'id': st.column_config.Column(label='ID', disabled=True),
-            'trip_days': st.column_config.NumberColumn(label='天数', disabled=False),
-            'delay_days': st.column_config.NumberColumn(label='延误天', disabled=False),
+            'register_date': st.column_config.Column(label='登记日期'),
+            'factory_name': st.column_config.Column(label='工厂名称'),
+            'onsite_staff': st.column_config.Column(label='驻厂人员'),
+            'trip_type': st.column_config.Column(label='出差类型'),
+            'trip_days': st.column_config.NumberColumn(label='出差天数', disabled=False),
+            'po_no': st.column_config.Column(label='PO单号'),
+            'sku': st.column_config.Column(label='SKU'),
+            'product_project': st.column_config.Column(label='产品/项目'),
+            'is_empty_run': st.column_config.Column(label='是否空跑'),
+            'is_recheck': st.column_config.Column(label='是否复检'),
+            'is_delay': st.column_config.Column(label='是否交期延误'),
+            'delay_days': st.column_config.NumberColumn(label='延误天数', disabled=False),
+            'return_reason': st.column_config.Column(label='退货原因'),
+            'inspection_result': st.column_config.Column(label='验货结果'),
+            'purpose': st.column_config.Column(label='驻厂目的'),
+            'notes': st.column_config.Column(label='备注'),
         }
         _disp = min(50, len(df_fr))
         editor_key = 'fr_editor'

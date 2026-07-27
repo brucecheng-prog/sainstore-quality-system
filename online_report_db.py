@@ -20,6 +20,7 @@ online_report_db.py
 import os
 import re
 import json
+import copy
 import sqlite3
 import time
 from datetime import datetime
@@ -374,6 +375,81 @@ def get_online_report(rid: int, with_data: bool = True):
         return _row_to_dict(row, with_data=with_data)
     finally:
         conn.close()
+
+
+def find_reusable_general_reports(query: str, limit: int = 30):
+    """查找可作为通用报告基础的已通过历史报告（只返回摘要）。"""
+    keyword = (query or "").strip().lower()
+    if len(keyword) < 2:
+        return []
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT * FROM online_reports WHERE status IN ('已通过', '已归档') ORDER BY updated_at DESC LIMIT 300"
+        ).fetchall()
+    finally:
+        conn.close()
+    matched = []
+    for row in rows:
+        report = _row_to_dict(row, with_data=True)
+        data = report.get("data") or {}
+        if data.get("template_code") == "ororo":
+            continue
+        basic = data.get("basic") or {}
+        haystack = " ".join(str(v or "") for v in (
+            basic.get("sku"), basic.get("product"), basic.get("model"),
+            basic.get("brand"), basic.get("supplier"), report.get("report_no"),
+        )).lower()
+        if keyword not in haystack:
+            continue
+        matched.append({
+            "id": report["id"], "report_no": report.get("report_no", ""),
+            "sku": basic.get("sku", ""), "product": basic.get("product", ""),
+            "brand": basic.get("brand", ""), "supplier": basic.get("supplier", ""),
+            "updated_at": report.get("updated_at", ""), "status": report.get("status", ""),
+        })
+        if len(matched) >= limit:
+            break
+    return matched
+
+
+def build_reused_general_draft(source_report_id: int, sku: str = "") -> dict:
+    """从已通过通用报告复制“标准”，清空本次检验事实和所有图片。"""
+    source = get_online_report(source_report_id, with_data=True)
+    if not source or source.get("status") not in ("已通过", "已归档"):
+        raise ValueError("仅可引用已通过或已归档的历史报告")
+    data = copy.deepcopy(source.get("data") or {})
+    if data.get("template_code") == "ororo":
+        raise ValueError("Ororo 固定模板不能作为通用报告历史来源")
+    basic = data.setdefault("basic", {})
+    for key in ("date", "inspector", "po", "title", "remark"):
+        basic[key] = ""
+    if sku.strip():
+        basic["sku"] = sku.strip()
+    for section in ("func", "safe", "rel", "defects"):
+        for item in data.get(section) or []:
+            if isinstance(item, dict):
+                for key in ("act", "actEn", "qty", "res", "sev", "def"):
+                    item[key] = "" if key not in ("qty",) else 0
+    for rows in (data.get("fixed") or {}).values():
+        for item in rows or []:
+            if isinstance(item, dict):
+                for key in ("def", "obs", "obsEn", "res", "sev", "len", "wid", "hgt", "dia", "gross", "net", "pkg"):
+                    if key in item:
+                        item[key] = ""
+    for item in data.get("skus") or []:
+        if isinstance(item, dict):
+            for key in ("orderNo", "orderQty", "packed", "qty", "uninspected", "unpacked"):
+                if key in item:
+                    item[key] = ""
+            if sku.strip() and "sku" in item:
+                item["sku"] = sku.strip()
+    data["galleries"] = {key: [] for key in (data.get("galleries") or {})}
+    data["conclusion"] = {"verdict": "", "conc": "", "sign1": "", "sign2": "", "sign3": ""}
+    data.pop("repno", None)
+    data["reused_from_report_id"] = source["id"]
+    data["reused_from_report_no"] = source.get("report_no", "")
+    return data
 
 
 def storage_key_for_report_key(report_key: str) -> str:

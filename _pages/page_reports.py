@@ -2243,6 +2243,29 @@ def _online_report_tab():
             st.caption("当前角色：审核员。可查看并审核待审核报告，不能新建或编辑检验报告。")
         elif user_role == "viewer":
             st.caption("当前角色：只读。仅可查看报告，不能新建、编辑、审核或删除。")
+
+        if user_role in ("admin", "uploader"):
+            with st.expander("从历史通用报告快速开始", expanded=False):
+                st.caption("完整 SKU 精确优先；也可输入如 28-020、产品名或品牌查询同系列。仅列出已通过/已归档的通用报告，不包含 Ororo。")
+                _hist_query = st.text_input("SKU / 产品 / 品牌", key="or_history_query", placeholder="例如：28-020-158-E 或 28-020")
+                _hist_rows = odb.find_reusable_general_reports(_hist_query) if len(_hist_query.strip()) >= 2 else []
+                if _hist_rows:
+                    _hist_options = {r["id"]: f"{r['report_no']}｜SKU {r['sku'] or '—'}｜{r['product'] or '未命名'}｜{r['brand'] or '—'}｜{r['updated_at'][:10]}" for r in _hist_rows}
+                    _hist_id = st.selectbox("选择作为检验基础的历史报告", list(_hist_options), format_func=lambda rid: _hist_options[rid], key="or_history_source")
+                    _target_sku = st.text_input("本次 SKU", value=_hist_query if "-" in _hist_query else "", key="or_history_target_sku", placeholder="例如：28-020-158-E")
+                    if st.button("引用此报告为新的通用草稿", type="primary", key="or_create_from_history"):
+                        try:
+                            _draft_data = odb.build_reused_general_draft(_hist_id, _target_sku)
+                            _new_rid, _new_no = odb.create_draft(_draft_data, created_by=created_by)
+                            odb.add_audit(user_name, "create", "online_report", str(_new_rid), f"引用历史报告 {_hist_options[_hist_id].split('｜')[0]}")
+                            ss["or_mode"], ss["or_edit_id"] = "edit", _new_rid
+                            ss["or_draft"] = odb.get_online_report(_new_rid).get("data", {})
+                            _flash(f"已从历史报告创建新草稿：{_new_no}。请复核 SKU、订单、实测结果和照片。", "ok")
+                            st.rerun()
+                        except Exception as _history_exc:
+                            st.error(f"引用历史报告失败：{_history_exc}")
+                elif _hist_query.strip():
+                    st.info("未找到可引用的已通过通用报告；你仍可新建空白报告。")
         if create_generic_clicked or create_ororo_clicked:
             try:
                 template_code = "ororo" if create_ororo_clicked else None

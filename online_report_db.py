@@ -378,14 +378,14 @@ def get_online_report(rid: int, with_data: bool = True):
 
 
 def find_reusable_general_reports(query: str, limit: int = 30):
-    """查找可作为通用报告基础的已通过历史报告（只返回摘要）。"""
+    """查找可作为通用报告基础的历史在线报告（只返回摘要）。"""
     keyword = (query or "").strip().lower()
     if len(keyword) < 2:
         return []
     conn = get_connection()
     try:
         rows = conn.execute(
-            "SELECT * FROM online_reports WHERE status IN ('已通过', '已归档') ORDER BY updated_at DESC LIMIT 300"
+            "SELECT * FROM online_reports WHERE status IN ('待审核', '已通过', '已归档') ORDER BY updated_at DESC LIMIT 300"
         ).fetchall()
     finally:
         conn.close()
@@ -416,8 +416,8 @@ def find_reusable_general_reports(query: str, limit: int = 30):
 def build_reused_general_draft(source_report_id: int, sku: str = "") -> dict:
     """从已通过通用报告复制“标准”，清空本次检验事实和所有图片。"""
     source = get_online_report(source_report_id, with_data=True)
-    if not source or source.get("status") not in ("已通过", "已归档"):
-        raise ValueError("仅可引用已通过或已归档的历史报告")
+    if not source or source.get("status") not in ("待审核", "已通过", "已归档"):
+        raise ValueError("仅可引用待审核、已通过或已归档的历史在线报告")
     data = copy.deepcopy(source.get("data") or {})
     if data.get("template_code") == "ororo":
         raise ValueError("Ororo 固定模板不能作为通用报告历史来源")

@@ -2246,11 +2246,11 @@ def _online_report_tab():
 
         if user_role in ("admin", "uploader"):
             with st.expander("从历史通用报告快速开始", expanded=False):
-                st.caption("完整 SKU 精确优先；也可输入如 28-020、产品名或品牌查询同系列。仅列出已通过/已归档的通用报告，不包含 Ororo。")
+                st.caption("完整 SKU 精确优先；也可输入如 28-020、产品名或品牌查询同系列。显示可复制字段的历史在线通用报告；待审核报告会标为“参考件”，不包含 Ororo。")
                 _hist_query = st.text_input("SKU / 产品 / 品牌", key="or_history_query", placeholder="例如：28-020-158-E 或 28-020")
                 _hist_rows = odb.find_reusable_general_reports(_hist_query) if len(_hist_query.strip()) >= 2 else []
                 if _hist_rows:
-                    _hist_options = {r["id"]: f"{r['report_no']}｜SKU {r['sku'] or '—'}｜{r['product'] or '未命名'}｜{r['brand'] or '—'}｜{r['updated_at'][:10]}" for r in _hist_rows}
+                    _hist_options = {r["id"]: f"{r['report_no']}｜{r['status']}{'（参考件）' if r['status'] == '待审核' else ''}｜SKU {r['sku'] or '—'}｜{r['product'] or '未命名'}｜{r['brand'] or '—'}｜{r['updated_at'][:10]}" for r in _hist_rows}
                     _hist_id = st.selectbox("选择作为检验基础的历史报告", list(_hist_options), format_func=lambda rid: _hist_options[rid], key="or_history_source")
                     _target_sku = st.text_input("本次 SKU", value=_hist_query if "-" in _hist_query else "", key="or_history_target_sku", placeholder="例如：28-020-158-E")
                     if st.button("引用此报告为新的通用草稿", type="primary", key="or_create_from_history"):
@@ -2265,7 +2265,7 @@ def _online_report_tab():
                         except Exception as _history_exc:
                             st.error(f"引用历史报告失败：{_history_exc}")
                 elif _hist_query.strip():
-                    st.info("未找到可引用的已通过通用报告；你仍可新建空白报告。")
+                    st.info("未找到可引用的历史在线通用报告；上传 PDF 记录只用于查阅，不能安全复制成在线表单。你仍可新建空白报告。")
         if create_generic_clicked or create_ororo_clicked:
             try:
                 template_code = "ororo" if create_ororo_clicked else None
